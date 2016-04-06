@@ -809,16 +809,17 @@
 			text-decoration: none;
 			font-weight: 300;
 			line-height: 1em;
-			font-size: 7em;
+			font-size: 5em;
 			color: #FFF;
 			letter-spacing: -0.05em;
-			margin: 0 0 0.125em 0;
+			margin: 0 0 0.125em -5.5em;
 		}
 		
 		#logo span
 		{
 			font-size: 1.4em;
 			color: #FFF;
+			margin-right: 5.5em;
 		}
 
 /*********************************************************************************/
