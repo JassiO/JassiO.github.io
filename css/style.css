@@ -93,7 +93,7 @@
 	{
 		border-left: solid 0.5em #ddd;
 		padding: 1em 0 1em 2em;
-		font-style: italic;
+		/*font-style: italic;*/
 	}
 	
 	p, ul, ol, dl, table
