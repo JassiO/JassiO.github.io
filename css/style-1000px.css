@@ -22,7 +22,7 @@
 		margin-bottom: 1.6em;
 	}
 	
-		header h2
+		header h2, h1
 		{
 			font-size: 2.8em;
 		}
@@ -40,12 +40,12 @@
 	{
 	}
 	
-	.homepage #content header h2
+	.homepage #content header h2, h1
 	{
 		font-size: 1.8em;
 	}
 
-	#sidebar h2
+	#sidebar h2, h1
 	{
 		font-size: 2em;
 	}

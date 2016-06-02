@@ -20,7 +20,7 @@
 		padding-top: 44px;
 	}
 
-	h2, h3, h4, h5, h6
+	h1, h2, h3, h4, h5, h6
 	{
 		line-height: 1em;
 		font-size: 1.5em;
@@ -61,7 +61,7 @@
 		margin-bottom: 1.6em;
 	}
 	
-		header h2
+		header h1, h2
 		{
 			font-size: 2em;
 		}
@@ -200,13 +200,13 @@
 		padding: 4em 0em 2em 0em;
 	}
 
-	.homepage #content header h2
+	.homepage #content header h1, h2
 	{
 		padding: 0.70em 0em;
 		font-size: 1.4em;
 	}
 
-	#sidebar h2
+	#sidebar h1, h2
 	{
 		font-size: 1.8em;
 	}

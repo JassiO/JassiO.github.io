@@ -21,7 +21,7 @@
 		margin-bottom: 1.6em;
 	}
 	
-		header h2
+		header h2, h1
 		{
 			font-size: 3.4em;
 		}
@@ -37,7 +37,7 @@
 
 	#header
 	{
-		padding: 10em 0 6em 0;
+		padding: 100em 0 6em 0;
 	}
 
 	.homepage #header
@@ -60,7 +60,7 @@
 		font-size: 2.2em;
 	}
 
-	#sidebar h2
+	#sidebar h2, h1
 	{
 		font-size: 2.4em;
 	}
