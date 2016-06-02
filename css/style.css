@@ -798,15 +798,6 @@
 			background: rgba(64,64,64,0.125);
 		}
 
-	#header_beackground
-	{
-		position: relative;
-		text-align: center;
-		background: url(../images/gras.jpg) no-repeat center center;
-		background-attachment: fixed;
-		background-size: cover;
-	}
-
 
 	#top .image {
 		border-radius: 50%;
@@ -991,7 +982,15 @@
 /*********************************************************************************/
 /* Featured                                                                      */
 /*********************************************************************************/
-	
+	#test
+	{
+		position: relative;
+		text-align: center;
+		background: url(../images/gras.jpg) no-repeat center center;
+		background-attachment: fixed;
+		background-size: cover;
+	}
+
 	#featured
 	{
 		position: relative;
