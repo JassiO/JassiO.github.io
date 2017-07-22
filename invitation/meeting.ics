@@ -5,7 +5,7 @@ METHOD:TEXT
 BEGIN:VEVENT
 UID:20170805@jasmin.odenwald@gmail.com
 ORGANIZER;CN="Jasmin Odenwald":MAILTO:jasmin.odenwald@gmail.com
-LOCATION:Dresden,Alaunstraße 61
+LOCATION:Dresden, Alaunstraße 61
 SUMMARY:Geburtstags- & Einweihungsfeier
 DESCRIPTION:Jassis total spektakulärer Geburtstags- & Einweihungsfeier
 CLASS:PUBLIC
