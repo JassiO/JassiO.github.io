@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:https://jassio.github.io/invitation/invitation.html
+METHOD:TEXT
+BEGIN:VEVENT
+UID:20170805@jasmin.odenwald@gmail.com
+ORGANIZER;CN="Jasmin Odenwald":MAILTO:jasmin.odenwald@gmail.com
+LOCATION:Dresden,Alaunstraße 61
+SUMMARY:Geburtstags- & Einweihungsfeier
+DESCRIPTION:Jassis total spektakulärer Geburtstags- & Einweihungsfeier
+CLASS:PUBLIC
+DTSTART:20170805T200000Z
+DTEND:20170806T043000Z
+DTSTAMP:20170722T132222Z
+END:VEVENT
+END:VCALENDAR
