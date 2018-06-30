@@ -28,8 +28,16 @@ function randomMargin() {
   var num = Math.floor(Math.random() * 181) - 100,
     starCont = document.getElementById("star-cont"),
     starContMargin = getComputedStyle(starCont).getPropertyValue("margin-left");
-  num += "%";
+  num += "%"
+
+  var rand = (Math.floor(Math.random() * 181) + 100),
+    star = document.getElementById("mr_star"),
+    starWidth = getComputedStyle(star).getPropertyValue("width");
+  rand += "px";
 
   starCont.style.marginLeft = num;
+  star.style.width = rand;
   console.log(num);
+  console.log(rand)
 }
+
