@@ -44,8 +44,8 @@ window.onload = function() {
 };
 
 function initDrawingCanvas() {
-    drawingCanvas.width = viewWidth;
-    drawingCanvas.height = viewHeight;
+    drawingCanvas.width = 800;
+    drawingCanvas.height = 800;
     ctx = drawingCanvas.getContext('2d');
 
     drawingCanvas.addEventListener('mousemove', updateMouseBodyPosition);
