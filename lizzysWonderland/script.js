@@ -1,8 +1,8 @@
 const TWO_PI = Math.PI * 2;
 const HALF_PI = Math.PI * 0.5;
 // canvas settings
-var viewWidth = 768,
-    viewHeight = 768,
+var viewWidth = 80%,
+    viewHeight = 80%,
     viewCenterX = viewWidth * 0.5,
     viewCenterY = viewHeight * 0.5,
     drawingCanvas = document.getElementById("drawing_canvas"),
