@@ -162,20 +162,12 @@ function update() {
     if (wheelSpinning === true && wheelStopped === false &&
         wheel.body.angularVelocity < 1 && arrow.hasStopped()) {
 
-        var win = wheel.gotLucky();
-
         wheelStopped = true;
         wheelSpinning = false;
 
         wheel.body.angularVelocity = 0;
 
-        if (win) {
-            spawnPartices();
-            statusLabel.innerHTML = 'Woop woop!'
-        }
-        else {
-            statusLabel.innerHTML = 'Too bad! Invite a Facebook friend to try again!';
-        }
+        statusLabel.innerHTML = wheel.gotLucky();
     }
 }
 
@@ -251,9 +243,22 @@ Wheel.prototype = {
     },
     gotLucky:function() {
         var currentRotation = wheel.body.angle % TWO_PI,
-            currentSegment = Math.floor(currentRotation / this.deltaPI);
-
-        return (currentSegment % 2 === 0);
+            currentSegment = Math.abs(Math.floor(currentRotation / this.deltaPI));
+ console.log(currentSegment)
+      if (currentSegment == 31 ) { 
+                spawnPartices();
+                return 'Hauptgewinn: Ein Küsschen vom Geburtstagskind! Hurra :D';
+          } 
+      
+          switch (currentSegment % 6) {
+            case 0: return 'Für dich gibts eine Schoki-Banane :D';
+            case 2: spawnPartices(); ctx.fillStyle = 'Du bekommst ein Eis! Juchu :D';
+            case 4: spawnPartices(); return 'Ein Shot für dich :D'; 
+            case 1: ctx.fillStyle = 'Party-Equiptment gibt es für dich :D';
+            case 5: ctx.fillStyle = 'Süßigkeiten! Whoop whoop :D'; 
+            default: return 'Du darfst einen Wunsch fliegen lassen :D';
+             
+          }
     },
     draw:function() {
         // TODO this should be cached in a canvas, and drawn as an image
@@ -268,9 +273,30 @@ Wheel.prototype = {
         ctx.fillRect(-12, 0, 24, 400);
 
         ctx.rotate(-this.body.angle);
+      
+      let purple = '#6a2c70';
+      let lightyellow = '#fff690';
+      let red = '#b83b5e';
+      let yellow = '#ffd571';
+      let orange = '#f08a5d';
+      let blue = '#00416d';
+      let lightorange = '#F0B35D';
 
         for (var i = 0; i < this.segments; i++) {
-            ctx.fillStyle = (i % 2 === 0) ? '#BD4932' : '#FFFAD5';
+          switch (i % 6) {
+            case 0: ctx.fillStyle = yellow; break;
+            case 2: ctx.fillStyle = orange; break;
+              case 4: ctx.fillStyle = purple; break;
+              case 1: ctx.fillStyle = lightorange; break;
+            case 5: ctx.fillStyle = lightyellow; break;
+            default: ctx.fillStyle = red;
+             
+          }
+              if (i == 31 ) {
+                ctx.fillStyle = blue;
+          } 
+          
+         
             ctx.beginPath();
             ctx.arc(0, 0, this.pRadius, i * this.deltaPI, (i + 1) * this.deltaPI);
             ctx.lineTo(0, 0);
