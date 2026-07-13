@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Zahlencode – Maskenball 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy-deepest:#2c0e18;
+    --burgundy-deep:#3d1220;
+    --burgundy:#5c1a2e;
+    --burgundy-light:#7a2c42;
+    --gold:#d4b96a;
+    --gold-soft:#c9a961;
+    --gold-deep:#a9822f;
+    --cream:#ecdfc0;
+    --cream-dim:#d9caa4;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--burgundy) 0%, var(--burgundy-deep) 55%, var(--burgundy-deepest) 100%);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:600px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 18px;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:clamp(24px, 6vw, 34px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .intro{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    line-height:1.5;
+    max-width:440px;
+    margin:14px auto 0;
+  }
+
+  main{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    padding:0 4px 10px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--burgundy-deep);
+    border:1px solid rgba(212,185,106,.35);
+    border-radius:6px;
+    padding:22px 20px 24px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(212,185,106,.15);
+    border-radius:3px;
+    pointer-events:none;
+  }
+
+  .clues{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .clue{
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+  .clue-num{
+    font-family:'Cinzel', serif;
+    font-size:18px;
+    color:var(--gold);
+    min-width:28px;
+    padding-top:2px;
+  }
+  .clue-text{
+    font-size:17px;
+    line-height:1.45;
+    color:var(--cream);
+  }
+
+  .lock-section{
+    text-align:center;
+  }
+  .lock-section h2{
+    font-family:'Cinzel', serif;
+    font-size:17px;
+    letter-spacing:.08em;
+    color:var(--gold);
+    margin:0 0 18px;
+    font-weight:500;
+  }
+
+  .code-boxes{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .code-boxes input{
+    width:48px;
+    height:58px;
+    text-align:center;
+    font-family:'Cinzel', serif;
+    font-size:24px;
+    background:var(--burgundy-deepest);
+    border:1px solid var(--gold-deep);
+    color:var(--cream);
+    border-radius:5px;
+    outline:none;
+  }
+  .code-boxes input:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 8px rgba(212,185,106,.4);
+  }
+  .code-boxes.shake{
+    animation:shake .4s ease;
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(6px); }
+  }
+
+  button{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.08em;
+    background:var(--gold);
+    color:var(--burgundy-deepest);
+    border:none;
+    padding:12px 28px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  button:hover{ filter:brightness(1.1); }
+  button:active{ transform:translateY(1px); }
+
+  .feedback{
+    min-height:22px;
+    font-size:15px;
+    color:#e0a3a3;
+    margin-top:14px;
+    font-style:italic;
+  }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  /* --- Erfolgs-Overlay --- */
+  .success-overlay{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(ellipse at 50% 40%, var(--burgundy) 0%, var(--burgundy-deepest) 80%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease;
+    z-index:10;
+  }
+  .success-overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .success-mask{
+    font-size:52px;
+    margin-bottom:18px;
+    opacity:0;
+    transform:scale(.7);
+    transition:opacity .5s ease .2s, transform .5s ease .2s;
+  }
+  .success-overlay.show .success-mask{
+    opacity:1;
+    transform:scale(1);
+  }
+  .success-title{
+    font-family:'Cinzel', serif;
+    font-size:clamp(28px,7vw,40px);
+    letter-spacing:.1em;
+    color:var(--gold);
+    margin:0 0 10px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .5s ease .35s, transform .5s ease .35s;
+  }
+  .success-overlay.show .success-title{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .success-text{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    max-width:380px;
+    opacity:0;
+    transition:opacity .5s ease .5s;
+  }
+  .success-overlay.show .success-text{
+    opacity:1;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+    .card{ padding:18px 14px 20px; }
+    .code-boxes input{ width:42px; height:52px; font-size:20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Aufgabe</div>
+    <h1>Der Zahlencode</h1>
+    <p class="intro">Die Loge hütet ihre Geheimnisse hinter einem vierstelligen Schloss. Löse die vier Rätsel unten – jedes verbirgt eine Ziffer, in genau dieser Reihenfolge.</p>
+    <p class="intro" style="font-size:14px; opacity:.7;">Bei jedem Aufruf ein neues Rätsel – Abschreiben von anderen hilft also nichts.</p>
+    <div class="divider"><span class="diamond"></span></div>
+  </header>
+
+  <main>
+    <section class="card">
+      <ol class="clues">
+        <li class="clue">
+          <span class="clue-num">I.</span>
+          <span class="clue-text" id="clueText0">…</span>
+        </li>
+        <li class="clue">
+          <span class="clue-num">II.</span>
+          <span class="clue-text" id="clueText1">…</span>
+        </li>
+        <li class="clue">
+          <span class="clue-num">III.</span>
+          <span class="clue-text" id="clueText2">…</span>
+        </li>
+        <li class="clue">
+          <span class="clue-num">IV.</span>
+          <span class="clue-text" id="clueText3">…</span>
+        </li>
+      </ol>
+    </section>
+
+    <section class="card lock-section">
+      <h2>Das Schloss der Loge</h2>
+      <div class="code-boxes" id="codeBoxes">
+        <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="1. Ziffer">
+        <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="2. Ziffer">
+        <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="3. Ziffer">
+        <input type="text" inputmode="numeric" pattern="[0-9]" maxlength="1" aria-label="4. Ziffer">
+      </div>
+      <button id="openBtn">Öffnen</button>
+      <div class="feedback" id="feedback" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-mask">🎭</div>
+  <h2 class="success-title">Geschafft!</h2>
+  <p class="success-text">Das Schloss der Loge hat sich geöffnet. Diese Aufgabe ist erledigt – auf zur nächsten Station.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // --- Rätsel-Generator: liefert bei jedem Laden andere Wörter/Zahlen ---
+
+  var LETTER_WORDS = ['BALL','MASKE','WALZER','DIADEM','SEKT','KERZE','SAMT','KRONE','PERLE','TANZ','VORHANG','SPIEGEL','FEDER','SAMTMASKE','KUTSCHE','ROSE','SEIDE','ZAUBER','GESANG','BUFFET','SEKTGLAS','ORCHIDEE','LATERNE','BROSCHE','MEDAILLE','ARMBAND','SCHLEIER','TURBAN','ANZUG','ROBE','CHOR'];
+  var VOWEL_WORDS = ['MASKENBALL','GARDEROBE','KAVALIER','PARFUM','ORCHESTER','ELEGANZ','AUGENMASKE','SAMTKLEID','ZEREMONIE','BEGLEITUNG','DEKORATION','EINLADUNG','ILLUSION','GESELLSCHAFT','VERKLEIDUNG','FEIERLAUNE','PARADE','BALLSAAL','AUFTRITT','GEHEIMNIS'];
+
+  var MATH_CONCEPTS = [
+    { n: 3, label: 'Ein Walzertakt hat drei Schläge.' },
+    { n: 3, label: 'Eine Ampel kennt drei Farben.' },
+    { n: 2, label: 'Für ein Duell braucht man zwei Kontrahenten.' },
+    { n: 2, label: 'Ein Paar besteht aus zwei Tänzern.' },
+    { n: 4, label: 'Ein Kleeblatt-Symbol im Kartenspiel hat vier Blätter.' },
+    { n: 4, label: 'Ein Kartendeck kennt vier Farben: Kreuz, Pik, Herz, Karo.' },
+    { n: 1, label: 'Eine Krone trägt in der Mitte meist eine große Spitze.' }
+  ];
+  var MULTIPLIER_WORDS = { 2:'Verdopple', 3:'Verdreifache', 4:'Vervierfache', 5:'Verfünffache', 6:'Versechsfache', 7:'Versiebenfache', 8:'Verachtfache', 9:'Verneunfache' };
+
+  var TRICK_RIDDLES = [
+    { text: 'Ein Ass zeigt in der Mitte der Karte genau ein Symbol. Wie viele sind es?', digit: 1 },
+    { text: 'Wie viele Sonnen sieht man um Mitternacht am Himmel?', digit: 0 },
+    { text: 'Wie viele Ecken hat ein perfekter Kreis?', digit: 0 },
+    { text: 'Wie viele Mitternächte gibt es an einem einzigen Tag?', digit: 1 },
+    { text: 'Wie viele Königinnen hat jede Spielerseite zu Beginn eines Schachspiels?', digit: 1 },
+    { text: 'Wie viele Nullen stehen in der geschriebenen Zahl Sieben?', digit: 0 },
+    { text: 'Wie viele Mittelpunkte hat ein Kreis?', digit: 1 },
+    { text: 'Die Augenzahlen eines Würfels addiert, ergeben 21. Teile das Ergebnis durch sieben.', digit: 3 },
+    { text: 'Wie viele Beine hat ein Hocker mit drei Beinen, wenn eines abgebrochen ist?', digit: 2 },
+    { text: 'Wie viele Zeiger hat eine Uhr ohne Sekundenzeiger?', digit: 2 },
+    { text: 'Wie viele Halbzeiten hat ein Fußballspiel?', digit: 2 },
+    { text: 'Wie viele Spitzen zählst du, wenn du nur die oberste einer Krone betrachtest?', digit: 1 }
+  ];
+
+  function randomFrom(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function countVowels(word){
+    var m = word.match(/[AEIOU]/g);
+    return m ? m.length : 0;
+  }
+
+  function buildLetterClue(){
+    var word = randomFrom(LETTER_WORDS);
+    return { text: 'Zähle die Buchstaben im Wort ' + word + '.', digit: word.length };
+  }
+
+  function buildVowelClue(){
+    var word = randomFrom(VOWEL_WORDS);
+    return { text: 'Zähle die Vokale (A, E, I, O, U) im Wort ' + word + '.', digit: countVowels(word) };
+  }
+
+  function buildMathClue(){
+    var concept = randomFrom(MATH_CONCEPTS);
+    var maxMultiplier = Math.floor(9 / concept.n);
+    var options = [];
+    for(var m = 2; m <= maxMultiplier; m++){ options.push(m); }
+    var multiplier = options.length ? randomFrom(options) : 2;
+    var digit = concept.n * multiplier;
+    var word = MULTIPLIER_WORDS[multiplier] || ('Multipliziere mit ' + multiplier + ':');
+    return { text: concept.label + ' ' + word + ' diese Zahl.', digit: digit };
+  }
+
+  function buildTrickClue(){
+    var picked = randomFrom(TRICK_RIDDLES);
+    return { text: picked.text, digit: picked.digit };
+  }
+
+  function buildPuzzle(){
+    return [ buildLetterClue(), buildVowelClue(), buildMathClue(), buildTrickClue() ];
+  }
+
+  var clues = buildPuzzle();
+  var CORRECT_CODE = clues.map(function(c){ return String(c.digit); }).join('');
+
+  clues.forEach(function(clue, idx){
+    var el = document.getElementById('clueText' + idx);
+    if(el){ el.textContent = clue.text; }
+  });
+
+  var inputs = Array.prototype.slice.call(document.querySelectorAll('#codeBoxes input'));
+  var codeBoxes = document.getElementById('codeBoxes');
+  var openBtn = document.getElementById('openBtn');
+  var feedback = document.getElementById('feedback');
+  var overlay = document.getElementById('successOverlay');
+
+  inputs.forEach(function(input, idx){
+    input.addEventListener('input', function(){
+      input.value = input.value.replace(/[^0-9]/g, '').slice(0, 1);
+      if(input.value && idx < inputs.length - 1){
+        inputs[idx + 1].focus();
+      }
+    });
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Backspace' && !input.value && idx > 0){
+        inputs[idx - 1].focus();
+      }
+      if(e.key === 'Enter'){
+        checkCode();
+      }
+    });
+  });
+
+  function checkCode(){
+    var entered = inputs.map(function(i){ return i.value; }).join('');
+    if(entered.length < 4){
+      feedback.textContent = 'Bitte alle vier Ziffern eingeben.';
+      return;
+    }
+    if(entered === CORRECT_CODE){
+      feedback.textContent = '';
+      overlay.classList.add('show');
+    } else {
+      feedback.textContent = 'Das ist nicht der richtige Code. Nochmal versuchen.';
+      codeBoxes.classList.remove('shake');
+      void codeBoxes.offsetWidth;
+      codeBoxes.classList.add('shake');
+    }
+  }
+
+  openBtn.addEventListener('click', checkCode);
+  inputs[0].focus();
+})();
+</script>
+</body>
+</html>
