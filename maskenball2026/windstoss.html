@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Der Windstoß – Maskenball 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy-deepest:#2c0e18;
+    --burgundy-deep:#3d1220;
+    --burgundy:#5c1a2e;
+    --gold:#d4b96a;
+    --gold-deep:#a9822f;
+    --cream:#ecdfc0;
+    --cream-dim:#d9caa4;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--burgundy) 0%, var(--burgundy-deep) 55%, var(--burgundy-deepest) 100%);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:480px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:clamp(24px, 6vw, 34px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .intro{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    line-height:1.5;
+    max-width:400px;
+    margin:14px auto 0;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 0;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  main{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    padding:22px 4px 10px;
+  }
+
+  .streak{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.08em;
+    color:var(--gold);
+  }
+  .streak span{ color:var(--cream); }
+
+  .candle-stage{
+    width:220px;
+    height:260px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    position:relative;
+    background:transparent;
+    border:none;
+    padding:0;
+    cursor:pointer;
+  }
+
+  .candle-body{
+    width:46px;
+    height:130px;
+    background:linear-gradient(180deg, #f0e6c8, #d9caa4);
+    border-radius:4px 4px 2px 2px;
+    position:relative;
+    box-shadow:inset -4px 0 8px rgba(0,0,0,.15);
+  }
+  .candle-body::after{
+    content:'';
+    position:absolute;
+    top:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:52px;
+    height:8px;
+    background:#e8dcc0;
+    border-radius:2px;
+  }
+  .wick{
+    position:absolute;
+    top:-14px;
+    left:50%;
+    transform:translateX(-50%);
+    width:2px;
+    height:14px;
+    background:#3d2b1f;
+  }
+
+  .flame{
+    position:absolute;
+    top:-42px;
+    left:50%;
+    width:22px;
+    height:34px;
+    transform:translateX(-50%);
+    background:radial-gradient(ellipse at 50% 70%, #fff3c4 0%, #f7b733 45%, #d4531e 80%, transparent 100%);
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    filter:blur(.3px);
+    transition:opacity .18s ease, transform .18s ease;
+    animation:flicker 1.6s ease-in-out infinite;
+  }
+  @keyframes flicker{
+    0%, 100%{ transform:translateX(-50%) rotate(-2deg) scaleY(1); }
+    25%{ transform:translateX(-50%) rotate(2deg) scaleY(1.04); }
+    50%{ transform:translateX(-50%) rotate(-1deg) scaleY(0.97); }
+    75%{ transform:translateX(-50%) rotate(3deg) scaleY(1.02); }
+  }
+  .flame.out{
+    opacity:0;
+    transform:translateX(-50%) scaleY(.2);
+    animation:none;
+  }
+
+  .smoke{
+    position:absolute;
+    top:-46px;
+    left:50%;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:rgba(220,220,220,.5);
+    opacity:0;
+    pointer-events:none;
+  }
+  .smoke.rise{
+    animation:smokeRise 1s ease-out forwards;
+  }
+  @keyframes smokeRise{
+    0%{ opacity:.6; transform:translate(-50%,0) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-40px) scale(4); }
+  }
+
+  .status-text{
+    font-family:'Cinzel', serif;
+    font-size:15px;
+    letter-spacing:.05em;
+    color:var(--gold);
+    min-height:22px;
+    text-align:center;
+  }
+  .status-text.early, .status-text.late{
+    color:#e0a3a3;
+  }
+  .status-text.hit{
+    color:#a8d0a0;
+  }
+
+  button.restart{
+    font-family:'Cinzel', serif;
+    font-size:13px;
+    letter-spacing:.08em;
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-deep);
+    padding:9px 20px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  button.restart:hover{ background:rgba(212,185,106,.1); }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  .success-overlay{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(ellipse at 50% 40%, var(--burgundy) 0%, var(--burgundy-deepest) 80%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease;
+    z-index:10;
+  }
+  .success-overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .success-mask{
+    font-size:52px;
+    margin-bottom:18px;
+    opacity:0;
+    transform:scale(.7);
+    transition:opacity .5s ease .2s, transform .5s ease .2s;
+  }
+  .success-overlay.show .success-mask{
+    opacity:1;
+    transform:scale(1);
+  }
+  .success-title{
+    font-family:'Cinzel', serif;
+    font-size:clamp(28px,7vw,40px);
+    letter-spacing:.1em;
+    color:var(--gold);
+    margin:0 0 10px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .5s ease .35s, transform .5s ease .35s;
+  }
+  .success-overlay.show .success-title{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .success-text{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    max-width:380px;
+    opacity:0;
+    transition:opacity .5s ease .5s;
+  }
+  .success-overlay.show .success-text{
+    opacity:1;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Aufgabe</div>
+    <h1>Der Windstoß</h1>
+    <p class="intro">Ein Windstoß kann jeden Moment durch den Saal fahren. Klicke auf die Kerze, sobald der Windstoß sie ausgeblasen hat, um sie wieder anzuzünden.</p>
+    <div class="divider"><span class="diamond"></span></div>
+  </header>
+
+  <main>
+    <div class="streak">Serie: <span id="streakNum">0</span> / <span id="streakTarget">5</span></div>
+
+    <button class="candle-stage" id="candleStage" aria-label="Kerze">
+      <div class="candle-body">
+        <div class="wick"></div>
+        <div class="flame" id="flame"></div>
+        <div class="smoke" id="smoke"></div>
+      </div>
+    </button>
+
+    <div class="status-text" id="statusText">Warte auf den Windstoß …</div>
+    <button class="restart" id="restartBtn">Serie neu starten</button>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-mask">🎭</div>
+  <h2 class="success-title">Geschafft!</h2>
+  <p class="success-text">Fünf Windstöße im richtigen Moment gelöscht. Diese Aufgabe ist erledigt – auf zur nächsten Station.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var TARGET_STREAK = 5;
+  var REACTION_WINDOW_MS = 800;
+  var WAIT_MIN_MS = 1200;
+  var WAIT_MAX_MS = 3500;
+  var ROUND_PAUSE_MS = 900;
+
+  var streak = 0;
+  var phase = 'idle'; // 'waiting' | 'active' | 'resolved'
+  var roundTimer = null;
+  var windowTimer = null;
+
+  var streakNumEl = document.getElementById('streakNum');
+  var statusEl = document.getElementById('statusText');
+  var flameEl = document.getElementById('flame');
+  var smokeEl = document.getElementById('smoke');
+  var candleStage = document.getElementById('candleStage');
+  var restartBtn = document.getElementById('restartBtn');
+  var overlay = document.getElementById('successOverlay');
+
+  function setStatus(text, cls){
+    statusEl.textContent = text;
+    statusEl.className = 'status-text' + (cls ? ' ' + cls : '');
+  }
+
+  function updateStreakDisplay(){
+    streakNumEl.textContent = streak;
+  }
+
+  function clearTimers(){
+    clearTimeout(roundTimer);
+    clearTimeout(windowTimer);
+  }
+
+  function startRound(){
+    clearTimers();
+    phase = 'waiting';
+    flameEl.classList.remove('out');
+    smokeEl.classList.remove('rise');
+    setStatus('Warte auf den Windstoß …');
+
+    var delay = WAIT_MIN_MS + Math.random() * (WAIT_MAX_MS - WAIT_MIN_MS);
+    roundTimer = setTimeout(function(){
+      phase = 'active';
+      flameEl.classList.add('out');
+      smokeEl.classList.add('rise');
+      setStatus('Schnell! Zünde die Kerze wieder an!');
+      windowTimer = setTimeout(function(){
+        if(phase === 'active'){
+          tooLate();
+        }
+      }, REACTION_WINDOW_MS);
+    }, delay);
+  }
+
+  function tooEarly(){
+    clearTimers();
+    phase = 'resolved';
+    streak = 0;
+    updateStreakDisplay();
+    setStatus('Zu früh! Die Flamme brannte noch.', 'early');
+    scheduleNextRound();
+  }
+
+  function correctHit(){
+    clearTimers();
+    phase = 'resolved';
+    flameEl.classList.remove('out');
+    smokeEl.classList.remove('rise');
+    streak++;
+    updateStreakDisplay();
+    if(streak >= TARGET_STREAK){
+      setStatus('Perfekt wieder angezündet!', 'hit');
+      overlay.classList.add('show');
+      return;
+    }
+    setStatus('Kerze erfolgreich angezündet!', 'hit');
+    scheduleNextRound();
+  }
+
+  function tooLate(){
+    phase = 'resolved';
+    streak = 0;
+    updateStreakDisplay();
+    setStatus('Zu spät! Der Wind war schon vorbei.', 'late');
+    scheduleNextRound();
+  }
+
+  function scheduleNextRound(){
+    roundTimer = setTimeout(startRound, ROUND_PAUSE_MS);
+  }
+
+  candleStage.addEventListener('click', function(){
+    if(phase === 'waiting'){
+      tooEarly();
+    } else if(phase === 'active'){
+      correctHit();
+    }
+    // clicks while 'idle' or 'resolved' are ignored
+  });
+
+  restartBtn.addEventListener('click', function(){
+    streak = 0;
+    updateStreakDisplay();
+    overlay.classList.remove('show');
+    startRound();
+  });
+
+  document.getElementById('streakTarget').textContent = TARGET_STREAK;
+  startRound();
+})();
+</script>
+</body>
+</html>
