@@ -125,9 +125,9 @@
 
   .board{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:8px;
-    width:min(300px, 78vw);
+    grid-template-columns:repeat(4, 1fr);
+    gap:7px;
+    width:min(340px, 84vw);
     aspect-ratio:1/1;
   }
   .cell{
@@ -138,7 +138,7 @@
     align-items:center;
     justify-content:center;
     font-family:'Cinzel', serif;
-    font-size:clamp(28px, 8vw, 40px);
+    font-size:clamp(20px, 6vw, 30px);
     cursor:pointer;
     color:var(--gold);
     transition:background .15s ease;
@@ -250,7 +250,7 @@
   <header>
     <div class="eyebrow">Aufgabe</div>
     <h1>Duell der Masken</h1>
-    <p class="intro">Ein maskierter Herausforderer wartet auf ein Spiel. Gewinne eine Partie, um weiterzuziehen – du beginnst, dein Gegner zieht nach Zufall.</p>
+    <p class="intro">Ein maskierter Herausforderer wartet auf ein Spiel. Bring vier deiner Zeichen in eine Reihe – waagrecht, senkrecht oder diagonal –, um weiterzuziehen. Du beginnst, dein Gegner zieht nach Zufall.</p>
     <div class="divider"><span class="diamond"></span></div>
   </header>
 
@@ -281,13 +281,20 @@
   var PLAYER_GLYPH = '✦';
   var COMPUTER_GLYPH = '❖';
 
-  var WIN_LINES = [
-    [0,1,2,3],[4,5,6,7],[8,9,10,11],
-    [0,3,6],[1,4,7],[2,5,8],
-    [0,4,8],[2,4,6]
-  ];
+  var WIN_LINES = (function(){
+    var lines = [];
+    for(var r = 0; r < 4; r++){
+      lines.push([r*4, r*4+1, r*4+2, r*4+3]);
+    }
+    for(var c = 0; c < 4; c++){
+      lines.push([c, c+4, c+8, c+12]);
+    }
+    lines.push([0,5,10,15]);
+    lines.push([3,6,9,12]);
+    return lines;
+  })();
 
-  var board = new Array(9).fill(null);
+  var board = new Array(16).fill(null);
   var gameOver = false;
 
   var boardEl = document.getElementById('board');
@@ -312,8 +319,10 @@
   function checkWinner(b){
     for(var i = 0; i < WIN_LINES.length; i++){
       var line = WIN_LINES[i];
-      var a = b[line[0]], c = b[line[1]], d = b[line[2], e = b[line[3]];
-      if(a && a === c && a === d && a === e){ return a; }
+      var first = b[line[0]];
+      if(!first){ continue; }
+      var allMatch = line.every(function(idx){ return b[idx] === first; });
+      if(allMatch){ return first; }
     }
     return null;
   }
@@ -341,11 +350,37 @@
     setTimeout(computerMove, 550);
   }
 
+  function findWinningMove(symbol){
+    var emptyCells = [];
+    board.forEach(function(v, i){ if(!v){ emptyCells.push(i); } });
+    for(var i = 0; i < emptyCells.length; i++){
+      var idx = emptyCells[i];
+      board[idx] = symbol;
+      var wins = checkWinner(board) === symbol;
+      board[idx] = null;
+      if(wins){ return idx; }
+    }
+    return null;
+  }
+
+  var BLOCK_CHANCE = 0.7;
+
   function computerMove(){
     var emptyCells = [];
     board.forEach(function(v, i){ if(!v){ emptyCells.push(i); } });
     if(emptyCells.length === 0){ return; }
-    var choice = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+    var choice = findWinningMove(COMPUTER);
+    if(choice === null){
+      var blockMove = findWinningMove(PLAYER);
+      if(blockMove !== null && Math.random() < BLOCK_CHANCE){
+        choice = blockMove;
+      }
+    }
+    if(choice === null){
+      choice = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    }
+
     board[choice] = COMPUTER;
     renderBoard();
 
@@ -377,7 +412,7 @@
   }
 
   function newGame(){
-    board = new Array(9).fill(null);
+    board = new Array(16).fill(null);
     gameOver = false;
     resultEl.textContent = '';
     statusEl.textContent = 'Du bist am Zug (' + PLAYER_GLYPH + ')';
