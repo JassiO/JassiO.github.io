@@ -314,7 +314,7 @@
   <header>
     <div class="eyebrow">Aufgabe</div>
     <h1>Der Windstoß</h1>
-    <p class="intro">Ein Windstoß kann jeden Moment durch den Saal fahren. Klicke auf die Kerze, sobald der Windstoß sie ausgeblasen hat, um sie wieder anzuzünden.</p>
+    <p class="intro">Ein Windstoß kann jeden Moment durch den Saal fahren. Klicke auf die Kerze, genau in dem Augenblick, in dem sie erlischt – nicht früher, nicht später.</p>
     <div class="divider"><span class="diamond"></span></div>
   </header>
 
@@ -348,10 +348,10 @@
 (function(){
   "use strict";
 
-  var TARGET_STREAK = 5;
-  var REACTION_WINDOW_MS = 800;
-  var WAIT_MIN_MS = 1200;
-  var WAIT_MAX_MS = 3500;
+  var TARGET_STREAK = 10;
+  var REACTION_WINDOW_MS = 500;
+  var WAIT_MIN_MS = 1000;
+  var WAIT_MAX_MS = 12000;
   var ROUND_PAUSE_MS = 900;
 
   var streak = 0;
@@ -393,7 +393,6 @@
       phase = 'active';
       flameEl.classList.add('out');
       smokeEl.classList.add('rise');
-      setStatus('Schnell! Zünde die Kerze wieder an!');
       windowTimer = setTimeout(function(){
         if(phase === 'active'){
           tooLate();
@@ -414,16 +413,14 @@
   function correctHit(){
     clearTimers();
     phase = 'resolved';
-    flameEl.classList.remove('out');
-    smokeEl.classList.remove('rise');
     streak++;
     updateStreakDisplay();
     if(streak >= TARGET_STREAK){
-      setStatus('Perfekt wieder angezündet!', 'hit');
+      setStatus('Perfekt getroffen!', 'hit');
       overlay.classList.add('show');
       return;
     }
-    setStatus('Kerze erfolgreich angezündet!', 'hit');
+    setStatus('Richtig gelöscht!', 'hit');
     scheduleNextRound();
   }
 
