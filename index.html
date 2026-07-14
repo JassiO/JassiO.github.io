@@ -280,6 +280,33 @@
     font-style:italic;
   }
 
+  /* --- Reihenfolge --- */
+  #orderDisplay{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+    gap:10px;
+  }
+  .order-box ol{
+    margin:0; padding:0;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .order-box li{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:15px;
+    color:var(--cream-dim);
+  }
+  .order-num{
+    font-family:'Cinzel', serif;
+    color:var(--gold);
+    min-width:18px;
+    font-size:13px;
+  }
+
   /* --- Glücksrad --- */
   .wheel-controls{
     display:flex;
@@ -351,6 +378,53 @@
     margin-top:4px;
   }
 
+  /* --- Punktestand --- */
+  #scoreDisplay{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+    gap:10px;
+  }
+  .score-box{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .score-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .score-btn{
+    width:28px; height:28px;
+    border-radius:50%;
+    background:transparent;
+    border:1px solid var(--gold-deep);
+    color:var(--cream-dim);
+    font-family:'Cinzel', serif;
+    font-size:16px;
+    line-height:1;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .score-btn:hover{
+    background:var(--burgundy-light);
+    color:var(--cream);
+  }
+  .score-value{
+    font-family:'Cinzel', serif;
+    color:var(--gold);
+    font-size:20px;
+    text-align:center;
+    flex:1;
+  }
+  .score-value.negative{
+    color:#e0a3a3;
+  }
+
   footer{
     text-align:center;
     padding:26px 10px 4px;
@@ -412,6 +486,16 @@
       <div class="team-note">Wer sich nach der Auslosung neu einträgt, ist erst beim nächsten Auslosen wieder in einem Team.</div>
     </section>
 
+    <section class="card" aria-labelledby="orderheading">
+      <h2 id="orderheading">Reihenfolge pro Team</h2>
+      <div class="team-controls">
+        <button id="shuffleOrder">Reihenfolge auslosen</button>
+        <button id="clearOrder" class="secondary">Reihenfolge aufheben</button>
+      </div>
+      <div id="orderDisplay"></div>
+      <div class="team-note">Die Reihenfolge wird innerhalb jedes Teams ausgelost. Nach einer neuen Team-Auslosung muss sie neu gezogen werden.</div>
+    </section>
+
     <section class="card" aria-labelledby="wheelheading">
       <h2 id="wheelheading">Glücksrad</h2>
       <div class="wheel-controls">
@@ -430,6 +514,14 @@
       <div class="msg" id="wheelMsg"></div>
     </section>
 
+    <section class="card" aria-labelledby="scoreheading">
+      <h2 id="scoreheading">Punktestand pro Team</h2>
+      <div id="scoreDisplay"></div>
+      <div class="team-controls" style="margin-top:14px;">
+        <button id="resetScores" class="secondary">Punkte zurücksetzen</button>
+      </div>
+    </section>
+
     <div class="reset-row">
       <button id="resetAll" class="secondary">Alles zurücksetzen</button>
     </div>
@@ -446,11 +538,17 @@
 
   var STORAGE_NAMES = 'maskenball_names';
   var STORAGE_TEAMS = 'maskenball_teams';
+  var STORAGE_ORDER = 'maskenball_order';
+  var STORAGE_SCORES = 'maskenball_scores';
 
   var names = [];
   var teams = [];
+  var orderByTeam = [];
+  var teamScores = [];
   try{ names = JSON.parse(localStorage.getItem(STORAGE_NAMES) || '[]'); }catch(e){ names = []; }
   try{ teams = JSON.parse(localStorage.getItem(STORAGE_TEAMS) || '[]'); }catch(e){ teams = []; }
+  try{ orderByTeam = JSON.parse(localStorage.getItem(STORAGE_ORDER) || '[]'); }catch(e){ orderByTeam = []; }
+  try{ teamScores = JSON.parse(localStorage.getItem(STORAGE_SCORES) || '[]'); }catch(e){ teamScores = []; }
 
   var addForm = document.getElementById('addForm');
   var nameInput = document.getElementById('nameInput');
@@ -463,6 +561,13 @@
   var shuffleTeamsBtn = document.getElementById('shuffleTeams');
   var clearTeamsBtn = document.getElementById('clearTeams');
   var teamsDisplay = document.getElementById('teamsDisplay');
+
+  var shuffleOrderBtn = document.getElementById('shuffleOrder');
+  var clearOrderBtn = document.getElementById('clearOrder');
+  var orderDisplay = document.getElementById('orderDisplay');
+
+  var scoreDisplay = document.getElementById('scoreDisplay');
+  var resetScoresBtn = document.getElementById('resetScores');
 
   var poolSelect = document.getElementById('poolSelect');
   var spinBtn = document.getElementById('spinBtn');
@@ -479,6 +584,8 @@
 
   function saveNames(){ localStorage.setItem(STORAGE_NAMES, JSON.stringify(names)); }
   function saveTeams(){ localStorage.setItem(STORAGE_TEAMS, JSON.stringify(teams)); }
+  function saveOrder(){ localStorage.setItem(STORAGE_ORDER, JSON.stringify(orderByTeam)); }
+  function saveScores(){ localStorage.setItem(STORAGE_SCORES, JSON.stringify(teamScores)); }
 
   function flashMsg(el, text, ms){
     el.textContent = text;
@@ -543,11 +650,17 @@
       return team.filter(function(n){ return n !== removed; });
     });
     saveTeams();
+    orderByTeam = orderByTeam.map(function(teamOrder){
+      return teamOrder.filter(function(n){ return n !== removed; });
+    });
+    saveOrder();
     renderList();
     renderCount();
     renderTeams();
     updatePoolOptions();
     redrawWheel();
+    renderOrder();
+    renderScores();
   }
 
   addForm.addEventListener('submit', function(e){
@@ -608,21 +721,153 @@
       teams[idx % n].push(name);
     });
     saveTeams();
+    orderByTeam = [];
+    saveOrder();
+    teamScores = teams.map(function(){ return 0; });
+    saveScores();
     renderTeams();
     updatePoolOptions();
     redrawWheel();
+    renderOrder();
+    renderScores();
   }
 
   function doClearTeams(){
     teams = [];
     saveTeams();
+    orderByTeam = [];
+    saveOrder();
+    teamScores = [];
+    saveScores();
     renderTeams();
     updatePoolOptions();
     redrawWheel();
+    renderOrder();
+    renderScores();
   }
 
   shuffleTeamsBtn.addEventListener('click', doShuffleTeams);
   clearTeamsBtn.addEventListener('click', doClearTeams);
+
+  // --- Reihenfolge pro Team ---
+  function renderOrder(){
+    orderDisplay.innerHTML = '';
+    if(teams.length === 0){
+      var hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.textContent = 'Noch keine Teams ausgelost.';
+      orderDisplay.appendChild(hint);
+      return;
+    }
+    if(orderByTeam.length !== teams.length){
+      var hint2 = document.createElement('div');
+      hint2.className = 'empty-hint';
+      hint2.textContent = 'Noch keine Reihenfolge ausgelost.';
+      orderDisplay.appendChild(hint2);
+      return;
+    }
+    teams.forEach(function(team, i){
+      var box = document.createElement('div');
+      box.className = 'team-box order-box';
+      var h3 = document.createElement('h3');
+      h3.textContent = 'Team ' + (i + 1);
+      box.appendChild(h3);
+      var ol = document.createElement('ol');
+      var teamOrder = Array.isArray(orderByTeam[i]) ? orderByTeam[i] : [];
+      teamOrder.forEach(function(name, idx){
+        var li = document.createElement('li');
+        var num = document.createElement('span');
+        num.className = 'order-num';
+        num.textContent = (idx + 1) + '.';
+        var nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        li.appendChild(num);
+        li.appendChild(nameSpan);
+        ol.appendChild(li);
+      });
+      box.appendChild(ol);
+      orderDisplay.appendChild(box);
+    });
+  }
+
+  function doShuffleOrder(){
+    if(teams.length === 0){
+      flashMsg(listMsg, 'Erst Teams auslosen.', 3000);
+      return;
+    }
+    orderByTeam = teams.map(function(team){ return shuffleArray(team); });
+    saveOrder();
+    renderOrder();
+  }
+
+  function doClearOrder(){
+    orderByTeam = [];
+    saveOrder();
+    renderOrder();
+  }
+
+  shuffleOrderBtn.addEventListener('click', doShuffleOrder);
+  clearOrderBtn.addEventListener('click', doClearOrder);
+
+  // --- Punktestand pro Team ---
+  function renderScores(){
+    scoreDisplay.innerHTML = '';
+    if(teams.length === 0){
+      var hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.textContent = 'Noch keine Teams ausgelost.';
+      scoreDisplay.appendChild(hint);
+      return;
+    }
+    teams.forEach(function(team, i){
+      if(typeof teamScores[i] !== 'number'){ teamScores[i] = 0; }
+      var box = document.createElement('div');
+      box.className = 'team-box score-box';
+      var h3 = document.createElement('h3');
+      h3.textContent = 'Team ' + (i + 1);
+      box.appendChild(h3);
+
+      var row = document.createElement('div');
+      row.className = 'score-row';
+
+      var minusBtn = document.createElement('button');
+      minusBtn.type = 'button';
+      minusBtn.className = 'score-btn';
+      minusBtn.textContent = '–';
+      minusBtn.setAttribute('aria-label', 'Punkt abziehen für Team ' + (i + 1));
+      minusBtn.addEventListener('click', function(){ changeScore(i, -1); });
+
+      var valueSpan = document.createElement('span');
+      valueSpan.className = 'score-value' + (teamScores[i] < 0 ? ' negative' : '');
+      valueSpan.textContent = teamScores[i];
+
+      var plusBtn = document.createElement('button');
+      plusBtn.type = 'button';
+      plusBtn.className = 'score-btn';
+      plusBtn.textContent = '+';
+      plusBtn.setAttribute('aria-label', 'Punkt für Team ' + (i + 1));
+      plusBtn.addEventListener('click', function(){ changeScore(i, 1); });
+
+      row.appendChild(minusBtn);
+      row.appendChild(valueSpan);
+      row.appendChild(plusBtn);
+      box.appendChild(row);
+      scoreDisplay.appendChild(box);
+    });
+  }
+
+  function changeScore(teamIndex, delta){
+    if(typeof teamScores[teamIndex] !== 'number'){ teamScores[teamIndex] = 0; }
+    teamScores[teamIndex] += delta;
+    saveScores();
+    renderScores();
+  }
+
+  resetScoresBtn.addEventListener('click', function(){
+    teamScores = teams.map(function(){ return 0; });
+    saveScores();
+    renderScores();
+  });
 
   // --- Pool select ---
   function updatePoolOptions(){
@@ -765,12 +1010,16 @@
   spinBtn.addEventListener('click', spinWheel);
 
   resetAllBtn.addEventListener('click', function(){
-    var ok = window.confirm('Wirklich alle Namen und Teams löschen?');
+    var ok = window.confirm('Wirklich alle Namen, Teams, die Reihenfolge und Punkte löschen?');
     if(!ok){ return; }
     names = [];
     teams = [];
+    orderByTeam = [];
+    teamScores = [];
     saveNames();
     saveTeams();
+    saveOrder();
+    saveScores();
     renderList();
     renderCount();
     renderTeams();
@@ -778,6 +1027,8 @@
     resetWheelPosition();
     redrawWheel();
     hideWinner();
+    renderOrder();
+    renderScores();
   });
 
   // --- Init ---
@@ -787,6 +1038,8 @@
   updatePoolOptions();
   wheelCanvas.style.transition = 'transform 3.2s cubic-bezier(.17,.67,.16,1.01)';
   redrawWheel();
+  renderOrder();
+  renderScores();
 })();
 </script>
 </body>
