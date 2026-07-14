@@ -187,10 +187,17 @@
   .count{
     color:var(--cream-dim);
     font-size:15px;
-    margin-bottom:14px;
+    margin-bottom:4px;
     letter-spacing:.02em;
   }
   .count span{ color:var(--gold); font-weight:600; }
+  .count-sub{
+    font-size:13px;
+    color:var(--cream-dim);
+    opacity:.75;
+    font-style:italic;
+    margin-bottom:14px;
+  }
 
   ul#nameList{
     list-style:none;
@@ -205,11 +212,49 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
+    gap:10px;
     background:rgba(0,0,0,.18);
     border-left:2px solid var(--gold-deep);
     padding:8px 10px 8px 14px;
     border-radius:3px;
     font-size:16px;
+  }
+  ul#nameList li.paused{
+    opacity:.55;
+    border-left-color:var(--cream-dim);
+  }
+  .pause-badge{
+    font-size:12px;
+    color:var(--gold-deep);
+    font-style:italic;
+    margin-left:6px;
+  }
+  .li-actions{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-shrink:0;
+  }
+  .pause-btn{
+    background:transparent;
+    border:1px solid var(--gold-deep);
+    color:var(--cream-dim);
+    width:26px; height:26px;
+    border-radius:50%;
+    font-size:12px;
+    line-height:1;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .pause-btn:hover{
+    background:var(--burgundy-light);
+    color:var(--cream);
+  }
+  .pause-btn.is-paused{
+    border-color:var(--gold);
+    color:var(--gold);
   }
   .del-btn{
     background:transparent;
@@ -233,6 +278,13 @@
     font-style:italic;
     font-size:15px;
     opacity:.7;
+  }
+  .team-box h3 .team-sub{
+    font-size:11px;
+    color:var(--cream-dim);
+    font-weight:normal;
+    letter-spacing:0;
+    opacity:.75;
   }
 
   /* --- Teams --- */
@@ -470,6 +522,7 @@
       </form>
       <div class="msg" id="listMsg" aria-live="polite"></div>
       <div class="count">Aktuell <span id="countNum">0</span> <span id="countLabel">Gäste</span> dabei</div>
+      <div class="count-sub" id="countSub"></div>
       <ul id="nameList"></ul>
     </section>
 
@@ -493,7 +546,7 @@
         <button id="clearOrder" class="secondary">Reihenfolge aufheben</button>
       </div>
       <div id="orderDisplay"></div>
-      <div class="team-note">Die Reihenfolge wird innerhalb jedes Teams ausgelost. Nach einer neuen Team-Auslosung muss sie neu gezogen werden.</div>
+      <div class="team-note">Die Reihenfolge wird innerhalb jedes Teams ausgelost, pausierte Personen werden dabei übersprungen. Nach einer neuen Team-Auslosung muss sie neu gezogen werden.</div>
     </section>
 
     <section class="card" aria-labelledby="wheelheading">
@@ -540,21 +593,25 @@
   var STORAGE_TEAMS = 'maskenball_teams';
   var STORAGE_ORDER = 'maskenball_order';
   var STORAGE_SCORES = 'maskenball_scores';
+  var STORAGE_PAUSED = 'maskenball_paused';
 
   var names = [];
   var teams = [];
   var orderByTeam = [];
   var teamScores = [];
+  var pausedNames = [];
   try{ names = JSON.parse(localStorage.getItem(STORAGE_NAMES) || '[]'); }catch(e){ names = []; }
   try{ teams = JSON.parse(localStorage.getItem(STORAGE_TEAMS) || '[]'); }catch(e){ teams = []; }
   try{ orderByTeam = JSON.parse(localStorage.getItem(STORAGE_ORDER) || '[]'); }catch(e){ orderByTeam = []; }
   try{ teamScores = JSON.parse(localStorage.getItem(STORAGE_SCORES) || '[]'); }catch(e){ teamScores = []; }
+  try{ pausedNames = JSON.parse(localStorage.getItem(STORAGE_PAUSED) || '[]'); }catch(e){ pausedNames = []; }
 
   var addForm = document.getElementById('addForm');
   var nameInput = document.getElementById('nameInput');
   var nameList = document.getElementById('nameList');
   var countNum = document.getElementById('countNum');
   var countLabel = document.getElementById('countLabel');
+  var countSub = document.getElementById('countSub');
   var listMsg = document.getElementById('listMsg');
 
   var teamCountInput = document.getElementById('teamCount');
@@ -586,6 +643,22 @@
   function saveTeams(){ localStorage.setItem(STORAGE_TEAMS, JSON.stringify(teams)); }
   function saveOrder(){ localStorage.setItem(STORAGE_ORDER, JSON.stringify(orderByTeam)); }
   function saveScores(){ localStorage.setItem(STORAGE_SCORES, JSON.stringify(teamScores)); }
+  function savePaused(){ localStorage.setItem(STORAGE_PAUSED, JSON.stringify(pausedNames)); }
+
+  function isPaused(name){ return pausedNames.indexOf(name) !== -1; }
+
+  function togglePause(name){
+    if(isPaused(name)){
+      pausedNames = pausedNames.filter(function(n){ return n !== name; });
+    } else {
+      pausedNames.push(name);
+    }
+    savePaused();
+    renderList();
+    renderCount();
+    renderTeams();
+    redrawWheel();
+  }
 
   function flashMsg(el, text, ms){
     el.textContent = text;
@@ -598,6 +671,13 @@
   function renderCount(){
     countNum.textContent = names.length;
     countLabel.textContent = names.length === 1 ? 'Gast' : 'Gäste';
+    var pausedCount = names.filter(isPaused).length;
+    if(pausedCount > 0){
+      var activeCount = names.length - pausedCount;
+      countSub.textContent = activeCount + ' aktiv, ' + pausedCount + ' pausiert';
+    } else {
+      countSub.textContent = '';
+    }
   }
 
   function renderList(){
@@ -612,16 +692,39 @@
       return;
     }
     names.forEach(function(name, idx){
+      var paused = isPaused(name);
       var li = document.createElement('li');
+      if(paused){ li.className = 'paused'; }
+
       var span = document.createElement('span');
       span.textContent = name;
-      var btn = document.createElement('button');
-      btn.className = 'del-btn';
-      btn.setAttribute('aria-label', name + ' austragen');
-      btn.textContent = '×';
-      btn.addEventListener('click', function(){ deleteName(idx); });
+      if(paused){
+        var badge = document.createElement('span');
+        badge.className = 'pause-badge';
+        badge.textContent = '(pausiert)';
+        span.appendChild(badge);
+      }
+
+      var actions = document.createElement('div');
+      actions.className = 'li-actions';
+
+      var pauseBtn = document.createElement('button');
+      pauseBtn.className = 'pause-btn' + (paused ? ' is-paused' : '');
+      pauseBtn.setAttribute('aria-label', paused ? name + ' zurückholen' : name + ' pausieren');
+      pauseBtn.textContent = paused ? '▶' : '❚❚';
+      pauseBtn.addEventListener('click', function(){ togglePause(name); });
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'del-btn';
+      delBtn.setAttribute('aria-label', name + ' austragen');
+      delBtn.textContent = '×';
+      delBtn.addEventListener('click', function(){ deleteName(idx); });
+
+      actions.appendChild(pauseBtn);
+      actions.appendChild(delBtn);
+
       li.appendChild(span);
-      li.appendChild(btn);
+      li.appendChild(actions);
       nameList.appendChild(li);
     });
   }
@@ -654,6 +757,8 @@
       return teamOrder.filter(function(n){ return n !== removed; });
     });
     saveOrder();
+    pausedNames = pausedNames.filter(function(n){ return n !== removed; });
+    savePaused();
     renderList();
     renderCount();
     renderTeams();
@@ -681,15 +786,29 @@
       return;
     }
     teams.forEach(function(team, i){
+      var activeCount = team.filter(function(n){ return !isPaused(n); }).length;
       var box = document.createElement('div');
       box.className = 'team-box';
       var h3 = document.createElement('h3');
-      h3.textContent = 'Team ' + (i + 1) + ' (' + team.length + ')';
+      h3.textContent = 'Team ' + (i + 1) + ' ';
+      var sub = document.createElement('span');
+      sub.className = 'team-sub';
+      sub.textContent = activeCount < team.length
+        ? '(' + activeCount + ' aktiv / ' + team.length + ')'
+        : '(' + team.length + ')';
+      h3.appendChild(sub);
       box.appendChild(h3);
       var ul = document.createElement('ul');
       team.forEach(function(name){
         var li = document.createElement('li');
         li.textContent = name;
+        if(isPaused(name)){
+          li.textContent += ' ';
+          var badge = document.createElement('span');
+          badge.className = 'pause-badge';
+          badge.textContent = '(pausiert)';
+          li.appendChild(badge);
+        }
         ul.appendChild(li);
       });
       box.appendChild(ul);
@@ -795,7 +914,10 @@
       flashMsg(listMsg, 'Erst Teams auslosen.', 3000);
       return;
     }
-    orderByTeam = teams.map(function(team){ return shuffleArray(team); });
+    orderByTeam = teams.map(function(team){
+      var active = team.filter(function(n){ return !isPaused(n); });
+      return shuffleArray(active);
+    });
     saveOrder();
     renderOrder();
   }
@@ -894,9 +1016,14 @@
   });
 
   function getCurrentPool(){
-    if(poolSelect.value === 'all'){ return names; }
-    var idx = parseInt(poolSelect.value.replace('team-', ''), 10);
-    return (teams[idx] || []);
+    var pool;
+    if(poolSelect.value === 'all'){
+      pool = names;
+    } else {
+      var idx = parseInt(poolSelect.value.replace('team-', ''), 10);
+      pool = teams[idx] || [];
+    }
+    return pool.filter(function(n){ return !isPaused(n); });
   }
 
   // --- Wheel drawing ---
@@ -1016,10 +1143,12 @@
     teams = [];
     orderByTeam = [];
     teamScores = [];
+    pausedNames = [];
     saveNames();
     saveTeams();
     saveOrder();
     saveScores();
+    savePaused();
     renderList();
     renderCount();
     renderTeams();
