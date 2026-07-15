@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zusage – Maskenball 2026</title>
+<title>Gästeliste – Maskenball 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
@@ -16,6 +16,8 @@
     --gold-deep:#a9822f;
     --cream:#ecdfc0;
     --cream-dim:#d9caa4;
+    --green:#a8d0a0;
+    --red:#e0a3a3;
   }
 
   *{ box-sizing:border-box; }
@@ -30,11 +32,419 @@
     display:flex;
     justify-content:center;
     padding:24px 14px 60px;
-    accent-color:var(--gold);
   }
 
   .frame{
     position:relative;
+    width:100%;
+    max-width:720px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:clamp(24px, 6vw, 34px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 0;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  main{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    padding:20px 4px 10px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--burgundy-deep);
+    border:1px solid rgba(212,185,106,.35);
+    border-radius:6px;
+    padding:22px 20px 24px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(212,185,106,.15);
+    border-radius:3px;
+    pointer-events:none;
+  }
+
+  .toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .toolbar h2{
+    font-family:'Cinzel', serif;
+    font-size:17px;
+    letter-spacing:.06em;
+    color:var(--gold);
+    margin:0;
+  }
+  .refresh-btn{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    background:transparent;
+    color:var(--gold-deep);
+    border:1px solid var(--gold-deep);
+    padding:7px 14px;
+    border-radius:4px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .refresh-btn:hover{ background:rgba(212,185,106,.1); color:var(--gold); }
+
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(110px,1fr));
+    gap:10px;
+  }
+  .summary-box{
+    background:rgba(0,0,0,.18);
+    border:1px solid rgba(212,185,106,.25);
+    border-radius:4px;
+    padding:14px 10px;
+    text-align:center;
+  }
+  .summary-num{
+    font-family:'Cinzel', serif;
+    font-size:26px;
+    color:var(--gold);
+    display:block;
+  }
+  .summary-label{
+    font-size:13px;
+    color:var(--cream-dim);
+    letter-spacing:.03em;
+  }
+
+  .filter-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+  }
+  .filter-btn{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.04em;
+    background:transparent;
+    color:var(--cream-dim);
+    border:1px solid rgba(212,185,106,.3);
+    padding:6px 12px;
+    border-radius:20px;
+    cursor:pointer;
+  }
+  .filter-btn.active{
+    background:var(--gold);
+    color:var(--burgundy-deepest);
+    border-color:var(--gold);
+  }
+
+  .guest-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:15px;
+  }
+  .guest-table th{
+    text-align:left;
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    color:var(--gold-deep);
+    padding:8px 10px;
+    border-bottom:1px solid rgba(212,185,106,.3);
+  }
+  .guest-table td{
+    padding:9px 10px;
+    border-bottom:1px solid rgba(212,185,106,.12);
+    vertical-align:top;
+  }
+  .status-pill{
+    display:inline-block;
+    font-size:12px;
+    padding:2px 9px;
+    border-radius:12px;
+    border:1px solid;
+  }
+  .status-yes{ color:var(--green); border-color:var(--green); }
+  .status-no{ color:var(--red); border-color:var(--red); }
+  .status-maybe{ color:var(--gold); border-color:var(--gold); }
+
+  .empty-hint, .load-msg{
+    text-align:center;
+    color:var(--cream-dim);
+    font-style:italic;
+    font-size:15px;
+    padding:16px 0;
+  }
+
+  .table-scroll{
+    overflow-x:auto;
+  }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+    .card{ padding:16px 14px 18px; }
+    .guest-table{ font-size:14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Nur für dich</div>
+    <h1>Gästeliste</h1>
+    <div class="divider"><span class="diamond"></span></div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="toolbar">
+        <h2>Überblick</h2>
+        <button type="button" class="refresh-btn" id="refreshBtn">Aktualisieren</button>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-box"><span class="summary-num" id="countYes">–</span><span class="summary-label">Zusagen</span></div>
+        <div class="summary-box"><span class="summary-num" id="countMaybe">–</span><span class="summary-label">Vielleicht</span></div>
+        <div class="summary-box"><span class="summary-num" id="countNo">–</span><span class="summary-label">Absagen</span></div>
+        <div class="summary-box"><span class="summary-num" id="countPlay">–</span><span class="summary-label">Spielen mit</span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="toolbar">
+        <h2>Alle Antworten</h2>
+      </div>
+      <div class="filter-row">
+        <button class="filter-btn active" data-filter="all">Alle</button>
+        <button class="filter-btn" data-filter="yes">Zusagen</button>
+        <button class="filter-btn" data-filter="maybe">Vielleicht</button>
+        <button class="filter-btn" data-filter="no">Absagen</button>
+      </div>
+      <div class="table-scroll">
+        <table class="guest-table" id="guestTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Bringt mit</th>
+              <th>Spielt mit</th>
+            </tr>
+          </thead>
+          <tbody id="guestTableBody"></tbody>
+        </table>
+      </div>
+      <div class="load-msg" id="loadMsg"></div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Konfiguration: gleiche Datenbank-URL wie in rsvp.html ----
+  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app";
+  // -----------------------------------------------------------------
+
+  var refreshBtn = document.getElementById('refreshBtn');
+  var tableBody = document.getElementById('guestTableBody');
+  var loadMsg = document.getElementById('loadMsg');
+  var countYesEl = document.getElementById('countYes');
+  var countMaybeEl = document.getElementById('countMaybe');
+  var countNoEl = document.getElementById('countNo');
+  var countPlayEl = document.getElementById('countPlay');
+  var filterBtns = document.querySelectorAll('.filter-btn');
+
+  var allEntries = [];
+  var currentFilter = 'all';
+
+  function statusKind(kommt){
+    if(!kommt){ return 'maybe'; }
+    if(kommt.indexOf('Nein') === 0){ return 'no'; }
+    if(kommt.indexOf('Vielleicht') === 0){ return 'maybe'; }
+    return 'yes';
+  }
+
+  function statusLabel(kind){
+    if(kind === 'yes'){ return 'Kommt'; }
+    if(kind === 'no'){ return 'Kommt nicht'; }
+    return 'Vielleicht';
+  }
+
+  function renderSummary(entries){
+    var yes = 0, maybe = 0, no = 0, play = 0;
+    entries.forEach(function(e){
+      var kind = statusKind(e.kommt);
+      if(kind === 'yes'){ yes++; }
+      else if(kind === 'no'){ no++; }
+      else { maybe++; }
+      if(e.spieltMit === 'Ja, gerne'){ play++; }
+    });
+    countYesEl.textContent = yes;
+    countMaybeEl.textContent = maybe;
+    countNoEl.textContent = no;
+    countPlayEl.textContent = play;
+  }
+
+  function renderTable(){
+    tableBody.innerHTML = '';
+    var filtered = allEntries.filter(function(e){
+      if(currentFilter === 'all'){ return true; }
+      return statusKind(e.kommt) === currentFilter;
+    });
+
+    if(filtered.length === 0){
+      var tr = document.createElement('tr');
+      var td = document.createElement('td');
+      td.colSpan = 4;
+      td.className = 'empty-hint';
+      td.textContent = 'Keine Einträge in dieser Ansicht.';
+      tr.appendChild(td);
+      tableBody.appendChild(tr);
+      return;
+    }
+
+    filtered
+      .slice()
+      .sort(function(a, b){ return (a.name || '').localeCompare(b.name || '', 'de'); })
+      .forEach(function(e){
+        var kind = statusKind(e.kommt);
+        var tr = document.createElement('tr');
+
+        var nameTd = document.createElement('td');
+        nameTd.textContent = e.name || '(ohne Namen)';
+        tr.appendChild(nameTd);
+
+        var statusTd = document.createElement('td');
+        var pill = document.createElement('span');
+        pill.className = 'status-pill status-' + kind;
+        pill.textContent = statusLabel(kind);
+        statusTd.appendChild(pill);
+        tr.appendChild(statusTd);
+
+        var foodTd = document.createElement('td');
+        foodTd.textContent = e.bringtMit || '–';
+        tr.appendChild(foodTd);
+
+        var playTd = document.createElement('td');
+        playTd.textContent = e.spieltMit || '–';
+        tr.appendChild(playTd);
+
+        tableBody.appendChild(tr);
+      });
+  }
+
+  function loadGuestList(){
+    if(FIREBASE_URL.indexOf('DEIN_PROJEKT') !== -1){
+      loadMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+      return;
+    }
+    loadMsg.textContent = 'Lädt …';
+    fetch(FIREBASE_URL + '/rsvps.json')
+      .then(function(res){
+        if(!res.ok){ throw new Error('Ladefehler'); }
+        return res.json();
+      })
+      .then(function(data){
+        loadMsg.textContent = '';
+        allEntries = data ? Object.keys(data).map(function(key){ return data[key]; }) : [];
+        renderSummary(allEntries);
+        renderTable();
+      })
+      .catch(function(){
+        loadMsg.textContent = 'Liste konnte gerade nicht geladen werden.';
+      });
+  }
+
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      filterBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentFilter = btn.getAttribute('data-filter');
+      renderTable();
+    });
+  });
+
+  refreshBtn.addEventListener('click', loadGuestList);
+  loadGuestList();
+})();
+</script>
+</body>
+</html>    position:relative;
     width:100%;
     max-width:560px;
   }
