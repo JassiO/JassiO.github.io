@@ -453,6 +453,11 @@
           </div>
         </div>
 
+        <div class="field">
+          <label class="field-label" for="emailInput">Deine E-Mail <span style="font-weight:normal; opacity:.7;">(optional, falls wir dich erreichen müssen)</span></label>
+          <input type="email" id="emailInput" name="E-Mail" autocomplete="email">
+        </div>
+
         <button type="submit" id="submitBtn">Absenden</button>
         <div class="form-msg" id="formMsg"></div>
         <div class="fallback-link" id="fallbackLink"></div>
@@ -477,10 +482,8 @@
 
   // ---- Konfiguration: hier eintragen ----
   var WEB3FORMS_ACCESS_KEY = "78422636-f09e-4c65-823b-d53e1ec9b2a8"; // von web3forms.com, per E-Mail erhalten
-  var FALLBACK_EMAIL = "odenwald@live.de"; // wohin die Mailto-Notlösung gehen soll
   var WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-  var JSON_BLOB_ID = "019f64ee-db1b-7623-9513-57a0f9175ce4"; // von jsonblob.com, siehe Anleitung
-  var JSON_BLOB_URL = "https://jsonblob.com/api/jsonBlob/019f64ee-db1b-7623-9513-57a0f9175ce4";
+  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app/"; // deine Datenbank-URL, OHNE Slash am Ende
   // ----------------------------------------
 
   var form = document.getElementById('rsvpForm');
@@ -502,7 +505,7 @@
   });
 
   function blobConfigured(){
-    return JSON_BLOB_ID.indexOf('DEIN_BLOB_ID') === -1;
+    return FIREBASE_URL.indexOf('DEIN_PROJEKT') === -1;
   }
 
   function renderFoodList(items){
@@ -533,14 +536,15 @@
       return;
     }
     foodListMsg.textContent = 'Lädt …';
-    fetch(JSON_BLOB_URL, { headers: { 'Accept': 'application/json' } })
+    fetch(FIREBASE_URL + '/foodlist.json')
       .then(function(res){
         if(!res.ok){ throw new Error('Ladefehler'); }
         return res.json();
       })
       .then(function(data){
         foodListMsg.textContent = '';
-        renderFoodList(Array.isArray(data.items) ? data.items : []);
+        var items = data ? Object.keys(data).map(function(key){ return data[key]; }) : [];
+        renderFoodList(items);
       })
       .catch(function(){
         foodListMsg.textContent = 'Liste konnte gerade nicht geladen werden.';
@@ -549,21 +553,13 @@
 
   function addFoodEntry(name, item){
     if(!blobConfigured()){ return Promise.resolve(); }
-    return fetch(JSON_BLOB_URL, { headers: { 'Accept': 'application/json' } })
+    return fetch(FIREBASE_URL + '/foodlist.json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, item: item })
+    })
       .then(function(res){
-        if(!res.ok){ throw new Error('Lesefehler'); }
-        return res.json();
-      })
-      .then(function(data){
-        var items = Array.isArray(data.items) ? data.items : [];
-        items.push({ name: name, item: item });
-        return fetch(JSON_BLOB_URL, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-          body: JSON.stringify({ items: items })
-        });
-      })
-      .then(function(){
+        if(!res.ok){ throw new Error('Schreibfehler'); }
         loadFoodList();
       })
       .catch(function(){
