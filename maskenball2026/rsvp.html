@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zusage – Maskenball 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy-deepest:#2c0e18;
+    --burgundy-deep:#3d1220;
+    --burgundy:#5c1a2e;
+    --gold:#d4b96a;
+    --gold-deep:#a9822f;
+    --cream:#ecdfc0;
+    --cream-dim:#d9caa4;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--burgundy) 0%, var(--burgundy-deep) 55%, var(--burgundy-deepest) 100%);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+    accent-color:var(--gold);
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:560px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:clamp(24px, 6vw, 34px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .intro{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    line-height:1.5;
+    max-width:440px;
+    margin:14px auto 0;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 0;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  main{
+    padding:22px 4px 10px;
+  }
+
+  .food-list-card{
+    margin-bottom:22px;
+  }
+  .food-list-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .food-list-header h2{
+    font-family:'Cinzel', serif;
+    font-size:16px;
+    letter-spacing:.06em;
+    color:var(--gold);
+    margin:0;
+  }
+  .refresh-btn{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.05em;
+    background:transparent;
+    color:var(--gold-deep);
+    border:1px solid var(--gold-deep);
+    padding:6px 12px;
+    border-radius:4px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .refresh-btn:hover{ background:rgba(212,185,106,.1); color:var(--gold); }
+
+  #foodList{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  #foodList li{
+    background:rgba(0,0,0,.18);
+    border-left:2px solid var(--gold-deep);
+    padding:8px 12px;
+    border-radius:3px;
+    font-size:15px;
+  }
+  #foodList li strong{
+    color:var(--gold);
+    font-weight:600;
+  }
+  .food-list-msg{
+    font-size:13px;
+    color:var(--cream-dim);
+    font-style:italic;
+    opacity:.75;
+    margin-top:8px;
+    min-height:16px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--burgundy-deep);
+    border:1px solid rgba(212,185,106,.35);
+    border-radius:6px;
+    padding:26px 22px 28px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(212,185,106,.15);
+    border-radius:3px;
+    pointer-events:none;
+  }
+
+  .field{
+    margin-bottom:22px;
+  }
+  .field label.field-label{
+    display:block;
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.05em;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  .field .hint{
+    display:block;
+    font-size:13px;
+    color:var(--cream-dim);
+    font-style:italic;
+    margin-top:6px;
+    opacity:.8;
+  }
+
+  input[type="text"], input[type="email"], textarea{
+    width:100%;
+    background:var(--burgundy-deepest);
+    border:1px solid var(--gold-deep);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    padding:11px 13px;
+    border-radius:4px;
+    outline:none;
+  }
+  textarea{
+    resize:vertical;
+    min-height:70px;
+  }
+  input:focus, textarea:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 8px rgba(212,185,106,.3);
+  }
+
+  .radio-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .radio-option{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(0,0,0,.16);
+    border:1px solid rgba(212,185,106,.25);
+    border-radius:4px;
+    padding:10px 12px;
+    cursor:pointer;
+    font-size:16px;
+  }
+  .radio-option:hover{
+    border-color:var(--gold-deep);
+  }
+  .radio-option input{
+    width:16px; height:16px;
+    flex-shrink:0;
+  }
+
+  .honeypot{
+    position:absolute;
+    left:-9999px;
+    width:1px;
+    height:1px;
+    overflow:hidden;
+  }
+
+  #conditionalFields.hidden{
+    display:none;
+  }
+
+  button[type="submit"]{
+    width:100%;
+    font-family:'Cinzel', serif;
+    font-size:15px;
+    letter-spacing:.08em;
+    background:var(--gold);
+    color:var(--burgundy-deepest);
+    border:none;
+    padding:14px 20px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .1s ease;
+  }
+  button[type="submit"]:hover{ filter:brightness(1.1); }
+  button[type="submit"]:active{ transform:translateY(1px); }
+  button[type="submit"]:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+
+  .form-msg{
+    text-align:center;
+    font-size:14px;
+    color:#e0a3a3;
+    margin-top:14px;
+    font-style:italic;
+    min-height:18px;
+  }
+
+  .fallback-link{
+    display:none;
+    text-align:center;
+    margin-top:10px;
+    font-size:14px;
+  }
+  .fallback-link a{
+    color:var(--gold);
+  }
+  .fallback-link.show{
+    display:block;
+  }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  .success-overlay{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(ellipse at 50% 40%, var(--burgundy) 0%, var(--burgundy-deepest) 80%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease;
+    z-index:10;
+  }
+  .success-overlay.show{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .success-mask{
+    font-size:52px;
+    margin-bottom:18px;
+    opacity:0;
+    transform:scale(.7);
+    transition:opacity .5s ease .2s, transform .5s ease .2s;
+  }
+  .success-overlay.show .success-mask{
+    opacity:1;
+    transform:scale(1);
+  }
+  .success-title{
+    font-family:'Cinzel', serif;
+    font-size:clamp(28px,7vw,40px);
+    letter-spacing:.1em;
+    color:var(--gold);
+    margin:0 0 10px;
+    opacity:0;
+    transform:translateY(10px);
+    transition:opacity .5s ease .35s, transform .5s ease .35s;
+  }
+  .success-overlay.show .success-title{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .success-text{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    max-width:380px;
+    opacity:0;
+    transition:opacity .5s ease .5s;
+  }
+  .success-overlay.show .success-text{
+    opacity:1;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+    .card{ padding:20px 16px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Einladung</div>
+    <h1>Bist du dabei?</h1>
+    <p class="intro">Trag dich ein, damit wir wissen, wer kommt, was noch auf den Tisch kommt und wer sich unter die Masken der Spieler mischt.</p>
+    <div class="divider"><span class="diamond"></span></div>
+  </header>
+
+  <main>
+    <div class="card food-list-card">
+      <div class="food-list-header">
+        <h2>Was andere schon mitbringen</h2>
+        <button type="button" class="refresh-btn" id="refreshFoodBtn">Aktualisieren</button>
+      </div>
+      <ul id="foodList"></ul>
+      <div class="food-list-msg" id="foodListMsg"></div>
+    </div>
+
+    <div class="card">
+      <form id="rsvpForm">
+        <input type="hidden" name="access_key" value="DEIN_ACCESS_KEY">
+        <input type="checkbox" name="botcheck" class="honeypot" tabindex="-1" autocomplete="off">
+        <input type="hidden" name="subject" value="Neue Maskenball-Zusage">
+        <input type="hidden" name="from_name" value="Maskenball 2026 – Zusagen">
+
+        <div class="field">
+          <label class="field-label" for="guestName">Dein Name</label>
+          <input type="text" id="guestName" name="Name" required autocomplete="name">
+        </div>
+
+        <div class="field">
+          <span class="field-label">Kommst du zum Maskenball?</span>
+          <div class="radio-group" id="attendanceGroup">
+            <label class="radio-option">
+              <input type="radio" name="Kommt" value="Ja, ich komme" required>
+              Ja, ich komme
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="Kommt" value="Vielleicht">
+              Vielleicht
+            </label>
+            <label class="radio-option">
+              <input type="radio" name="Kommt" value="Nein, ich kann leider nicht">
+              Nein, ich kann leider nicht
+            </label>
+          </div>
+        </div>
+
+        <div id="conditionalFields">
+          <div class="field">
+            <label class="field-label" for="foodInput">Was bringst du zu essen oder trinken mit?</label>
+            <input type="text" id="foodInput" name="Bringt mit" placeholder="z. B. einen Salat, Sekt, Fingerfood …">
+          </div>
+
+          <div class="field">
+            <span class="field-label">Möchtest du beim Maskenball-Spiel mitmachen?</span>
+            <div class="radio-group">
+              <label class="radio-option">
+                <input type="radio" name="Spielt mit" value="Ja, gerne">
+                Ja, gerne
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="Spielt mit" value="Lieber nicht">
+                Lieber nicht, ich schau nur zu
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="Spielt mit" value="Weiß ich noch nicht">
+                Weiß ich noch nicht
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="emailInput">Deine E-Mail <span style="font-weight:normal; opacity:.7;">(optional, falls wir dich erreichen müssen)</span></label>
+          <input type="email" id="emailInput" name="E-Mail" autocomplete="email">
+        </div>
+
+        <button type="submit" id="submitBtn">Absenden</button>
+        <div class="form-msg" id="formMsg"></div>
+        <div class="fallback-link" id="fallbackLink"></div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<div class="success-overlay" id="successOverlay">
+  <div class="success-mask">🎭</div>
+  <h2 class="success-title">Danke!</h2>
+  <p class="success-text">Deine Zusage ist angekommen. Wir sehen uns auf dem Maskenball!</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Konfiguration: hier eintragen ----
+  var WEB3FORMS_ACCESS_KEY = "DEIN_ACCESS_KEY"; // von web3forms.com, per E-Mail erhalten
+  var FALLBACK_EMAIL = "deine-email@beispiel.de"; // wohin die Mailto-Notlösung gehen soll
+  var WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+  var JSON_BLOB_ID = "DEIN_BLOB_ID"; // von jsonblob.com, siehe Anleitung
+  var JSON_BLOB_URL = "https://jsonblob.com/api/jsonBlob/" + JSON_BLOB_ID;
+  // ----------------------------------------
+
+  var form = document.getElementById('rsvpForm');
+  var submitBtn = document.getElementById('submitBtn');
+  var formMsg = document.getElementById('formMsg');
+  var fallbackLink = document.getElementById('fallbackLink');
+  var overlay = document.getElementById('successOverlay');
+  var conditionalFields = document.getElementById('conditionalFields');
+  var attendanceGroup = document.getElementById('attendanceGroup');
+  var foodList = document.getElementById('foodList');
+  var foodListMsg = document.getElementById('foodListMsg');
+  var refreshFoodBtn = document.getElementById('refreshFoodBtn');
+
+  attendanceGroup.addEventListener('change', function(e){
+    if(e.target.name === 'Kommt'){
+      var isNo = e.target.value.indexOf('Nein') === 0;
+      conditionalFields.classList.toggle('hidden', isNo);
+    }
+  });
+
+  function blobConfigured(){
+    return JSON_BLOB_ID.indexOf('DEIN_BLOB_ID') === -1;
+  }
+
+  function renderFoodList(items){
+    foodList.innerHTML = '';
+    if(!items || items.length === 0){
+      var li = document.createElement('li');
+      li.style.border = 'none';
+      li.style.background = 'transparent';
+      li.style.fontStyle = 'italic';
+      li.style.color = 'var(--cream-dim)';
+      li.textContent = 'Noch nichts eingetragen.';
+      foodList.appendChild(li);
+      return;
+    }
+    items.forEach(function(entry){
+      var li = document.createElement('li');
+      var strong = document.createElement('strong');
+      strong.textContent = entry.name + ': ';
+      li.appendChild(strong);
+      li.appendChild(document.createTextNode(entry.item));
+      foodList.appendChild(li);
+    });
+  }
+
+  function loadFoodList(){
+    if(!blobConfigured()){
+      foodListMsg.textContent = 'Liste noch nicht eingerichtet.';
+      return;
+    }
+    foodListMsg.textContent = 'Lädt …';
+    fetch(JSON_BLOB_URL, { headers: { 'Accept': 'application/json' } })
+      .then(function(res){
+        if(!res.ok){ throw new Error('Ladefehler'); }
+        return res.json();
+      })
+      .then(function(data){
+        foodListMsg.textContent = '';
+        renderFoodList(Array.isArray(data.items) ? data.items : []);
+      })
+      .catch(function(){
+        foodListMsg.textContent = 'Liste konnte gerade nicht geladen werden.';
+      });
+  }
+
+  function addFoodEntry(name, item){
+    if(!blobConfigured()){ return Promise.resolve(); }
+    return fetch(JSON_BLOB_URL, { headers: { 'Accept': 'application/json' } })
+      .then(function(res){
+        if(!res.ok){ throw new Error('Lesefehler'); }
+        return res.json();
+      })
+      .then(function(data){
+        var items = Array.isArray(data.items) ? data.items : [];
+        items.push({ name: name, item: item });
+        return fetch(JSON_BLOB_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          body: JSON.stringify({ items: items })
+        });
+      })
+      .then(function(){
+        loadFoodList();
+      })
+      .catch(function(){
+        // Kein Blocker: die Haupt-Zusage kam trotzdem über Web3Forms an.
+      });
+  }
+
+  refreshFoodBtn.addEventListener('click', loadFoodList);
+  loadFoodList();
+
+  function buildMailtoFallback(formData){
+    var lines = [];
+    formData.forEach(function(value, key){
+      if(key === 'access_key' || key === 'botcheck' || key === 'subject' || key === 'from_name'){ return; }
+      if(value){ lines.push(key + ': ' + value); }
+    });
+    var subject = 'Maskenball-Zusage: ' + (formData.get('Name') || '');
+    var body = lines.join('\n');
+    return 'mailto:' + FALLBACK_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    if(WEB3FORMS_ACCESS_KEY.indexOf('DEIN_ACCESS_KEY') !== -1){
+      formMsg.textContent = 'Formular ist noch nicht eingerichtet (Access Key fehlt). Bitte per Mail senden:';
+      var link = document.createElement('a');
+      link.href = buildMailtoFallback(new FormData(form));
+      link.textContent = 'Per E-Mail senden';
+      fallbackLink.innerHTML = '';
+      fallbackLink.appendChild(link);
+      fallbackLink.classList.add('show');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird gesendet …';
+    formMsg.textContent = '';
+    fallbackLink.classList.remove('show');
+
+    var formData = new FormData(form);
+    var payload = Object.fromEntries(formData);
+
+    fetch(WEB3FORMS_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(response){
+      if(response.ok){
+        var attendance = payload['Kommt'] || '';
+        var food = (payload['Bringt mit'] || '').trim();
+        var name = (payload['Name'] || '').trim();
+        var isComing = attendance.indexOf('Nein') !== 0;
+        if(isComing && food && name){
+          addFoodEntry(name, food).then(function(){
+            overlay.classList.add('show');
+          });
+        } else {
+          overlay.classList.add('show');
+        }
+      } else {
+        throw new Error('Web3Forms-Fehler');
+      }
+    }).catch(function(){
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Absenden';
+      formMsg.textContent = 'Das Senden hat leider nicht geklappt. Bitte stattdessen per Mail schicken:';
+      var link = document.createElement('a');
+      link.href = buildMailtoFallback(formData);
+      link.textContent = 'Per E-Mail senden';
+      fallbackLink.innerHTML = '';
+      fallbackLink.appendChild(link);
+      fallbackLink.classList.add('show');
+    });
+  });
+})();
+</script>
+</body>
+</html>
