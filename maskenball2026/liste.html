@@ -298,6 +298,8 @@
               <th>Status</th>
               <th>Bringt mit</th>
               <th>Spielt mit</th>
+              <th>Begleitung</th>
+              <th>Begleitung Details</th>
             </tr>
           </thead>
           <tbody id="guestTableBody"></tbody>
@@ -403,6 +405,14 @@
         var playTd = document.createElement('td');
         playTd.textContent = e.spieltMit || '–';
         tr.appendChild(playTd);
+
+        var plusTd = document.createElement('td');
+        plusTd.textContext = e.begleitung || '-';
+        tr.appendChild(plusTd);
+
+        var plusDetailTd = document.createElement('td');
+        plusDetailTd.textContext = e.begleitungDetails || '-';
+        tr.appendChild(plusDetailTd);
 
         tableBody.appendChild(tr);
       });
