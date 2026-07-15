@@ -430,6 +430,31 @@
 
         <div id="conditionalFields">
           <div class="field">
+            <span class="field-label">Wie viele kommt ihr?</span>
+            <div class="radio-group" id="begleitungGroup">
+              <label class="radio-option">
+                <input type="radio" name="Begleitung" value="Allein" required>
+                Allein
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="Begleitung" value="+1">
+                +1
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="Begleitung" value="+2">
+                +2
+              </label>
+              <label class="radio-option">
+                <input type="radio" name="Begleitung" value="Sonstiges">
+                Sonstiges
+              </label>
+            </div>
+            <div class="field" id="begleitungDetailField" style="margin-top:10px; margin-bottom:0; display:none;">
+              <input type="text" id="begleitungDetailInput" name="Begleitung Details" placeholder="z. B. +3, oder wer genau mitkommt">
+            </div>
+          </div>
+
+          <div class="field">
             <label class="field-label" for="foodInput">Falls du was zu essen mitbringst, was wäre das?</label>
             <input type="text" id="foodInput" name="Bringt mit" placeholder="z. B. einen Salat, Kuchen, Fingerfood …">
           </div>
@@ -489,6 +514,8 @@
   var overlay = document.getElementById('successOverlay');
   var conditionalFields = document.getElementById('conditionalFields');
   var attendanceGroup = document.getElementById('attendanceGroup');
+  var begleitungGroup = document.getElementById('begleitungGroup');
+  var begleitungDetailField = document.getElementById('begleitungDetailField');
   var foodList = document.getElementById('foodList');
   var foodListMsg = document.getElementById('foodListMsg');
   var refreshFoodBtn = document.getElementById('refreshFoodBtn');
@@ -497,6 +524,12 @@
     if(e.target.name === 'Kommt'){
       var isNo = e.target.value.indexOf('Nein') === 0;
       conditionalFields.classList.toggle('hidden', isNo);
+    }
+  });
+
+  begleitungGroup.addEventListener('change', function(e){
+    if(e.target.name === 'Begleitung'){
+      begleitungDetailField.style.display = (e.target.value === 'Sonstiges') ? 'block' : 'none';
     }
   });
 
@@ -568,6 +601,8 @@
     var entry = {
       name: payload['Name'] || '',
       kommt: payload['Kommt'] || '',
+      begleitung: payload['Begleitung'] || '',
+      begleitungDetails: payload['Begleitung Details'] || '',
       bringtMit: payload['Bringt mit'] || '',
       spieltMit: payload['Spielt mit'] || '',
       zeitpunkt: new Date().toISOString()
