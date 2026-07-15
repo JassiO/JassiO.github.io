@@ -407,12 +407,12 @@
         tr.appendChild(playTd);
 
         var plusTd = document.createElement('td');
-        plusTd.textContext = e.begleitung || '-';
+        plusTd.textContent = e.begleitung || '-';
         tr.appendChild(plusTd);
         console.log(e.begleitung);
 
         var plusDetailTd = document.createElement('td');
-        plusDetailTd.textContext = e.begleitungDetails || '-';
+        plusDetailTd.textContent = e.begleitungDetails || '-';
         tr.appendChild(plusDetailTd);
 
         tableBody.appendChild(tr);
