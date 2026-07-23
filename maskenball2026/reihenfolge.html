@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maskenball 2026 – Reihenfolge, Punkte & Glücksrad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy-deepest:#2c0e18;
+    --burgundy-deep:#3d1220;
+    --burgundy:#5c1a2e;
+    --burgundy-light:#7a2c42;
+    --gold:#d4b96a;
+    --gold-soft:#c9a961;
+    --gold-deep:#a9822f;
+    --cream:#ecdfc0;
+    --cream-dim:#d9caa4;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--burgundy) 0%, var(--burgundy-deep) 55%, var(--burgundy-deepest) 100%);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:640px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 18px;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.12em;
+    font-size:clamp(28px, 7vw, 42px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .subtitle{
+    font-style:italic;
+    color:var(--cream-dim);
+    letter-spacing:.03em;
+    margin:10px 0 0;
+    font-size:16px;
+    max-width:440px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  main{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    padding:0 4px 10px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--burgundy-deep);
+    border:1px solid rgba(212,185,106,.35);
+    border-radius:6px;
+    padding:22px 20px 24px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(212,185,106,.15);
+    border-radius:3px;
+    pointer-events:none;
+  }
+
+  h2{
+    font-family:'Cinzel', serif;
+    font-size:19px;
+    letter-spacing:.08em;
+    color:var(--gold);
+    margin:0 0 16px;
+    font-weight:500;
+  }
+
+  button{
+    font-family:'Cinzel', serif;
+    font-size:13px;
+    letter-spacing:.06em;
+    background:var(--gold);
+    color:var(--burgundy-deepest);
+    border:none;
+    padding:10px 16px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .1s ease;
+    white-space:nowrap;
+  }
+  button:hover{ filter:brightness(1.1); }
+  button:active{ transform:translateY(1px); }
+  button.secondary{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-deep);
+  }
+  button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+
+  select{
+    background:var(--burgundy-deepest);
+    border:1px solid var(--gold-deep);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    padding:10px 12px;
+    border-radius:4px;
+    outline:none;
+  }
+
+  .controls-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin-bottom:16px;
+  }
+
+  .empty-hint{
+    color:var(--cream-dim);
+    font-style:italic;
+    font-size:15px;
+    opacity:.7;
+  }
+
+  .msg{
+    text-align:center;
+    font-size:14px;
+    color:var(--cream-dim);
+    min-height:18px;
+    margin-top:4px;
+  }
+
+  /* --- Team-Boxen (Reihenfolge) --- */
+  #orderDisplay{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+    gap:10px;
+  }
+  .order-box h3{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.05em;
+    color:var(--gold);
+    margin:0 0 8px;
+  }
+  .order-box{
+    background:rgba(0,0,0,.16);
+    border:1px solid rgba(212,185,106,.25);
+    border-radius:5px;
+    padding:12px 14px;
+  }
+  .order-box ol{
+    margin:0; padding:0;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .order-box li{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:15px;
+    color:var(--cream-dim);
+  }
+  .order-num{
+    font-family:'Cinzel', serif;
+    color:var(--gold);
+    min-width:18px;
+    font-size:13px;
+  }
+  .team-note{
+    font-size:13px;
+    color:var(--cream-dim);
+    opacity:.7;
+    margin-top:12px;
+    font-style:italic;
+  }
+
+  /* --- Punktestand --- */
+  #scoreDisplay{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+    gap:10px;
+  }
+  .score-box{
+    background:rgba(0,0,0,.16);
+    border:1px solid rgba(212,185,106,.25);
+    border-radius:5px;
+    padding:12px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .score-box h3{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.05em;
+    color:var(--gold);
+    margin:0;
+  }
+  .score-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .score-btn{
+    width:28px; height:28px;
+    border-radius:50%;
+    background:transparent;
+    border:1px solid var(--gold-deep);
+    color:var(--cream-dim);
+    font-family:'Cinzel', serif;
+    font-size:16px;
+    line-height:1;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .score-btn:hover{
+    background:var(--burgundy-light);
+    color:var(--cream);
+  }
+  .score-value{
+    font-family:'Cinzel', serif;
+    color:var(--gold);
+    font-size:20px;
+    text-align:center;
+    flex:1;
+  }
+  .score-value.negative{
+    color:#e0a3a3;
+  }
+
+  /* --- Glücksrad --- */
+  .wheel-controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .wheel-controls select{ min-width:170px; }
+
+  .wheel-wrap{
+    position:relative;
+    width:min(320px, 82vw);
+    aspect-ratio:1/1;
+    margin:0 auto 18px;
+  }
+  #wheelCanvas{
+    width:100%;
+    height:100%;
+    display:block;
+    filter:drop-shadow(0 6px 18px rgba(0,0,0,.5));
+  }
+  .pointer{
+    position:absolute;
+    top:-4px;
+    left:50%;
+    transform:translateX(-50%);
+    width:0; height:0;
+    border-left:11px solid transparent;
+    border-right:11px solid transparent;
+    border-top:18px solid var(--gold);
+    filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));
+    z-index:3;
+  }
+
+  .winner-display{
+    text-align:center;
+    min-height:54px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+  }
+  .winner-label{
+    font-size:12px;
+    letter-spacing:.15em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+  }
+  .winner-name{
+    font-family:'Cinzel', serif;
+    font-size:24px;
+    color:var(--gold);
+    opacity:0;
+    transform:scale(.85);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .winner-name.show{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  .reset-row{
+    text-align:center;
+    margin-top:6px;
+  }
+  .reset-row button{
+    font-size:11px;
+    padding:6px 12px;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+    .card{ padding:18px 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Spielleitung</div>
+    <h1>Maskenball<br>der Spiele</h1>
+    <p class="subtitle">Reihenfolge. Wer mitspielt, meldet sich über die Spieler-Anmeldung an.</p>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="orderheading">
+      <h2 id="orderheading">Reihenfolge pro Team</h2>
+      <div class="controls-row">
+        <button id="shuffleOrder">Reihenfolge auslosen</button>
+        <button id="clearOrder" class="secondary">Reihenfolge aufheben</button>
+      </div>
+      <div id="orderDisplay"></div>
+      <div class="msg" id="orderMsg"></div>
+      <div class="team-note">Zieht bei jedem Auslosen den aktuellen aktiven Spielerstand aus der Anmeldung. Pausierte Personen werden übersprungen.</div>
+    </section>
+
+    <div class="reset-row">
+      <button id="resetAll" class="secondary">Reihenfolge &amp; Punkte zurücksetzen</button>
+    </div>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Konfiguration: gleiche Werte wie in spieleranmeldung.html ----
+  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app"; // OHNE Slash am Ende
+  var TEAM_COUNT = 2;
+  // ---------------------------------------------------------------------
+
+  var STORAGE_ORDER = 'maskenball_order_v2';
+  var STORAGE_SCORES = 'maskenball_scores_v2';
+
+  var orderByTeam = [];
+  var teamScores = [];
+  try{ orderByTeam = JSON.parse(localStorage.getItem(STORAGE_ORDER) || '[]'); }catch(e){ orderByTeam = []; }
+  try{ teamScores = JSON.parse(localStorage.getItem(STORAGE_SCORES) || '[]'); }catch(e){ teamScores = []; }
+  if(teamScores.length !== TEAM_COUNT){
+    teamScores = new Array(TEAM_COUNT).fill(0);
+  }
+
+  var orderDisplay = document.getElementById('orderDisplay');
+  var shuffleOrderBtn = document.getElementById('shuffleOrder');
+  var clearOrderBtn = document.getElementById('clearOrder');
+  var orderMsg = document.getElementById('orderMsg');
+
+  var scoreDisplay = document.getElementById('scoreDisplay');
+  var resetScoresBtn = document.getElementById('resetScores');
+
+  var poolSelect = document.getElementById('poolSelect');
+  var refreshPlayersBtn = document.getElementById('refreshPlayersBtn');
+  var spinBtn = document.getElementById('spinBtn');
+  var wheelCanvas = document.getElementById('wheelCanvas');
+  var wheelMsg = document.getElementById('wheelMsg');
+  var winnerLabel = document.getElementById('winnerLabel');
+  var winnerNameEl = document.getElementById('winnerName');
+  var resetAllBtn = document.getElementById('resetAll');
+
+  var ctx = wheelCanvas.getContext('2d');
+  var currentRotation = 0;
+  var spinTimeout = null;
+
+  var activePlayersByTeam = {};
+  for(var t = 1; t <= TEAM_COUNT; t++){ activePlayersByTeam[t] = []; }
+
+  function firebaseConfigured(){
+    return FIREBASE_URL.indexOf('DEIN_PROJEKT') === -1;
+  }
+
+  function saveOrder(){ localStorage.setItem(STORAGE_ORDER, JSON.stringify(orderByTeam)); }
+  function saveScores(){ localStorage.setItem(STORAGE_SCORES, JSON.stringify(teamScores)); }
+
+  function fetchActiveGroupedPlayers(){
+    if(!firebaseConfigured()){ return Promise.resolve(null); }
+    return fetch(FIREBASE_URL + '/spieler.json')
+      .then(function(res){
+        if(!res.ok){ throw new Error('Ladefehler'); }
+        return res.json();
+      })
+      .then(function(data){
+        var grouped = {};
+        for(var i = 1; i <= TEAM_COUNT; i++){ grouped[i] = []; }
+        var players = data || {};
+        Object.keys(players).forEach(function(key){
+          var p = players[key];
+          if(!p.paused && p.team >= 1 && p.team <= TEAM_COUNT){
+            grouped[p.team].push(p.name || '');
+          }
+        });
+        return grouped;
+      });
+  }
+
+  function shuffleArray(arr){
+    var a = arr.slice();
+    for(var i = a.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  // --- Reihenfolge pro Team ---
+  function renderOrder(){
+    orderDisplay.innerHTML = '';
+    if(orderByTeam.length !== TEAM_COUNT){
+      var hint = document.createElement('div');
+      hint.className = 'empty-hint';
+      hint.textContent = 'Noch keine Reihenfolge ausgelost.';
+      orderDisplay.appendChild(hint);
+      return;
+    }
+    for(var teamNum = 1; teamNum <= TEAM_COUNT; teamNum++){
+      var box = document.createElement('div');
+      box.className = 'order-box';
+      var h3 = document.createElement('h3');
+      h3.textContent = 'Team ' + teamNum;
+      box.appendChild(h3);
+      var ol = document.createElement('ol');
+      var members = orderByTeam[teamNum - 1] || [];
+      if(members.length === 0){
+        var empty = document.createElement('div');
+        empty.className = 'empty-hint';
+        empty.style.fontSize = '13px';
+        empty.textContent = 'Niemand aktiv.';
+        box.appendChild(empty);
+      } else {
+        members.forEach(function(name, idx){
+          var li = document.createElement('li');
+          var num = document.createElement('span');
+          num.className = 'order-num';
+          num.textContent = (idx + 1) + '.';
+          var nameSpan = document.createElement('span');
+          nameSpan.textContent = name;
+          li.appendChild(num);
+          li.appendChild(nameSpan);
+          ol.appendChild(li);
+        });
+        box.appendChild(ol);
+      }
+      orderDisplay.appendChild(box);
+    }
+  }
+
+  function doShuffleOrder(){
+    orderMsg.textContent = 'Lädt aktive Spieler …';
+    fetchActiveGroupedPlayers().then(function(grouped){
+      if(!grouped){
+        orderMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+        return;
+      }
+      orderByTeam = [];
+      for(var i = 1; i <= TEAM_COUNT; i++){
+        orderByTeam.push(shuffleArray(grouped[i] || []));
+      }
+      saveOrder();
+      orderMsg.textContent = '';
+      renderOrder();
+    }).catch(function(){
+      orderMsg.textContent = 'Spielerliste konnte nicht geladen werden.';
+    });
+  }
+
+  function doClearOrder(){
+    orderByTeam = [];
+    saveOrder();
+    renderOrder();
+  }
+
+  shuffleOrderBtn.addEventListener('click', doShuffleOrder);
+  clearOrderBtn.addEventListener('click', doClearOrder);
+
+  // --- Punktestand pro Team ---
+  function renderScores(){
+    scoreDisplay.innerHTML = '';
+    for(var i = 0; i < TEAM_COUNT; i++){
+      (function(teamIndex){
+        var box = document.createElement('div');
+        box.className = 'score-box';
+        var h3 = document.createElement('h3');
+        h3.textContent = 'Team ' + (teamIndex + 1);
+        box.appendChild(h3);
+
+        var row = document.createElement('div');
+        row.className = 'score-row';
+
+        var minusBtn = document.createElement('button');
+        minusBtn.type = 'button';
+        minusBtn.className = 'score-btn';
+        minusBtn.textContent = '–';
+        minusBtn.setAttribute('aria-label', 'Punkt abziehen für Team ' + (teamIndex + 1));
+        minusBtn.addEventListener('click', function(){ changeScore(teamIndex, -1); });
+
+        var valueSpan = document.createElement('span');
+        valueSpan.className = 'score-value' + (teamScores[teamIndex] < 0 ? ' negative' : '');
+        valueSpan.textContent = teamScores[teamIndex];
+
+        var plusBtn = document.createElement('button');
+        plusBtn.type = 'button';
+        plusBtn.className = 'score-btn';
+        plusBtn.textContent = '+';
+        plusBtn.setAttribute('aria-label', 'Punkt für Team ' + (teamIndex + 1));
+        plusBtn.addEventListener('click', function(){ changeScore(teamIndex, 1); });
+
+        row.appendChild(minusBtn);
+        row.appendChild(valueSpan);
+        row.appendChild(plusBtn);
+        box.appendChild(row);
+        scoreDisplay.appendChild(box);
+      })(i);
+    }
+  }
+
+  function changeScore(teamIndex, delta){
+    teamScores[teamIndex] = (teamScores[teamIndex] || 0) + delta;
+    saveScores();
+    renderScores();
+  }
+
+  resetScoresBtn.addEventListener('click', function(){
+    teamScores = new Array(TEAM_COUNT).fill(0);
+    saveScores();
+    renderScores();
+  });
+
+  // --- Pool-Auswahl fürs Glücksrad ---
+  for(var pt = 1; pt <= TEAM_COUNT; pt++){
+    var opt = document.createElement('option');
+    opt.value = 'team-' + pt;
+    opt.textContent = 'Team ' + pt;
+    poolSelect.appendChild(opt);
+  }
+
+  function getCurrentPool(){
+    if(poolSelect.value === 'all'){
+      var all = [];
+      for(var i = 1; i <= TEAM_COUNT; i++){ all = all.concat(activePlayersByTeam[i] || []); }
+      return all;
+    }
+    var idx = parseInt(poolSelect.value.replace('team-', ''), 10);
+    return activePlayersByTeam[idx] || [];
+  }
+
+  function refreshPlayers(){
+    wheelMsg.textContent = 'Lädt aktive Spieler …';
+    return fetchActiveGroupedPlayers().then(function(grouped){
+      if(!grouped){
+        wheelMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+        return;
+      }
+      activePlayersByTeam = grouped;
+      wheelMsg.textContent = '';
+      resetWheelPosition();
+      redrawWheel();
+      hideWinner();
+    }).catch(function(){
+      wheelMsg.textContent = 'Spielerliste konnte nicht geladen werden.';
+    });
+  }
+
+  poolSelect.addEventListener('change', function(){
+    resetWheelPosition();
+    redrawWheel();
+    hideWinner();
+  });
+
+  refreshPlayersBtn.addEventListener('click', refreshPlayers);
+
+  // --- Wheel drawing ---
+  function drawWheelSegments(pool){
+    var size = wheelCanvas.width;
+    var radius = size / 2;
+    ctx.clearRect(0, 0, size, size);
+
+    if(pool.length === 0){
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#4a1626';
+      ctx.fill();
+      ctx.strokeStyle = '#d4b96a';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.fillStyle = '#ecdfc0';
+      ctx.font = '18px "Cormorant Garamond", serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Keine Spieler', radius, radius);
+      return;
+    }
+
+    var seg = (Math.PI * 2) / pool.length;
+    var colors = ['#6d2038', '#4a1626'];
+    pool.forEach(function(name, i){
+      var start = -Math.PI / 2 + i * seg;
+      var end = start + seg;
+      ctx.beginPath();
+      ctx.moveTo(radius, radius);
+      ctx.arc(radius, radius, radius - 4, start, end);
+      ctx.closePath();
+      ctx.fillStyle = colors[i % 2];
+      ctx.fill();
+      ctx.strokeStyle = '#d4b96a';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      var mid = start + seg / 2;
+      ctx.save();
+      ctx.translate(radius, radius);
+      ctx.rotate(mid);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#ecdfc0';
+      var fontSize = pool.length > 14 ? 10 : (pool.length > 8 ? 13 : 16);
+      ctx.font = fontSize + 'px "Cormorant Garamond", serif';
+      var label = name.length > 15 ? name.slice(0, 13) + '…' : name;
+      ctx.fillText(label, radius - 16, 0);
+      ctx.restore();
+    });
+
+    ctx.beginPath();
+    ctx.arc(radius, radius, radius * 0.11, 0, Math.PI * 2);
+    ctx.fillStyle = '#d4b96a';
+    ctx.fill();
+    ctx.strokeStyle = '#2c0e18';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  function redrawWheel(){
+    drawWheelSegments(getCurrentPool());
+  }
+
+  function resetWheelPosition(){
+    wheelCanvas.style.transition = 'none';
+    wheelCanvas.style.transform = 'rotate(0deg)';
+    currentRotation = 0;
+    void wheelCanvas.offsetWidth;
+    wheelCanvas.style.transition = 'transform 3.2s cubic-bezier(.17,.67,.16,1.01)';
+  }
+
+  function hideWinner(){
+    winnerLabel.style.display = 'none';
+    winnerNameEl.classList.remove('show');
+    winnerNameEl.textContent = '';
+  }
+
+  function spinWheel(){
+    var pool = getCurrentPool();
+    if(pool.length < 2){
+      wheelMsg.textContent = 'Es werden mindestens 2 aktive Spieler in der Auswahl benötigt.';
+      return;
+    }
+    hideWinner();
+    wheelMsg.textContent = '';
+    spinBtn.disabled = true;
+
+    var winnerIndex = Math.floor(Math.random() * pool.length);
+    var segDeg = 360 / pool.length;
+    var midDeg = winnerIndex * segDeg + segDeg / 2;
+    var target = (360 - midDeg) % 360;
+    var extraSpins = 4 + Math.floor(Math.random() * 3);
+    var newRotation = currentRotation - (currentRotation % 360) + extraSpins * 360 + target;
+    currentRotation = newRotation;
+
+    wheelCanvas.style.transition = 'transform 3.2s cubic-bezier(.17,.67,.16,1.01)';
+    wheelCanvas.style.transform = 'rotate(' + newRotation + 'deg)';
+
+    clearTimeout(spinTimeout);
+    spinTimeout = setTimeout(function(){
+      winnerLabel.style.display = 'inline-block';
+      winnerNameEl.textContent = pool[winnerIndex];
+      requestAnimationFrame(function(){ winnerNameEl.classList.add('show'); });
+      spinBtn.disabled = false;
+    }, 3300);
+  }
+
+  spinBtn.addEventListener('click', spinWheel);
+
+  resetAllBtn.addEventListener('click', function(){
+    var ok = window.confirm('Reihenfolge und Punkte wirklich zurücksetzen?');
+    if(!ok){ return; }
+    orderByTeam = [];
+    teamScores = new Array(TEAM_COUNT).fill(0);
+    saveOrder();
+    saveScores();
+    renderOrder();
+    renderScores();
+  });
+
+  // --- Init ---
+  renderOrder();
+  renderScores();
+  wheelCanvas.style.transition = 'transform 3.2s cubic-bezier(.17,.67,.16,1.01)';
+  refreshPlayers();
+})();
+</script>
+</body>
+</html>
