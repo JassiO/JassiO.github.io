@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitspielen – Maskenball 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --burgundy-deepest:#2c0e18;
+    --burgundy-deep:#3d1220;
+    --burgundy:#5c1a2e;
+    --gold:#d4b96a;
+    --gold-deep:#a9822f;
+    --cream:#ecdfc0;
+    --cream-dim:#d9caa4;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 50% 0%, var(--burgundy) 0%, var(--burgundy-deep) 55%, var(--burgundy-deepest) 100%);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    display:flex;
+    justify-content:center;
+    padding:24px 14px 60px;
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    max-width:520px;
+  }
+
+  .corner{
+    position:absolute;
+    width:56px;
+    height:56px;
+    pointer-events:none;
+    opacity:.85;
+    z-index:2;
+  }
+  .corner svg{ width:100%; height:100%; }
+  .corner-tl{ top:-6px; left:-6px; }
+  .corner-tr{ top:-6px; right:-6px; transform:scaleX(-1); }
+  .corner-bl{ bottom:-6px; left:-6px; transform:scaleY(-1); }
+  .corner-br{ bottom:-6px; right:-6px; transform:scale(-1,-1); }
+
+  header{
+    text-align:center;
+    padding:34px 10px 18px;
+  }
+
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:12px;
+    letter-spacing:.25em;
+    color:var(--gold-deep);
+    text-transform:uppercase;
+    margin-bottom:8px;
+  }
+
+  h1{
+    font-family:'Cinzel', serif;
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:clamp(24px, 6vw, 34px);
+    margin:0;
+    color:var(--cream);
+    text-shadow:0 0 18px rgba(212,185,106,.25);
+  }
+
+  .intro{
+    font-style:italic;
+    color:var(--cream-dim);
+    font-size:17px;
+    line-height:1.5;
+    max-width:400px;
+    margin:14px auto 0;
+  }
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    justify-content:center;
+    margin:16px auto 0;
+    max-width:280px;
+  }
+  .divider::before, .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .diamond{
+    width:8px; height:8px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    box-shadow:0 0 6px rgba(212,185,106,.6);
+  }
+
+  main{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    padding:20px 4px 10px;
+  }
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent), var(--burgundy-deep);
+    border:1px solid rgba(212,185,106,.35);
+    border-radius:6px;
+    padding:22px 20px 24px;
+    position:relative;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    inset:6px;
+    border:1px solid rgba(212,185,106,.15);
+    border-radius:3px;
+    pointer-events:none;
+  }
+
+  #joinForm{
+    display:flex;
+    gap:8px;
+    margin-bottom:8px;
+  }
+  input[type="text"]{
+    flex:1;
+    min-width:0;
+    background:var(--burgundy-deepest);
+    border:1px solid var(--gold-deep);
+    color:var(--cream);
+    font-family:'Cormorant Garamond', serif;
+    font-size:16px;
+    padding:11px 13px;
+    border-radius:4px;
+    outline:none;
+  }
+  input[type="text"]:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 8px rgba(212,185,106,.3);
+  }
+
+  button{
+    font-family:'Cinzel', serif;
+    font-size:13px;
+    letter-spacing:.06em;
+    background:var(--gold);
+    color:var(--burgundy-deepest);
+    border:none;
+    padding:11px 20px;
+    border-radius:4px;
+    cursor:pointer;
+    transition:filter .15s ease, transform .1s ease;
+    white-space:nowrap;
+  }
+  button:hover{ filter:brightness(1.1); }
+  button:active{ transform:translateY(1px); }
+  button.secondary{
+    background:transparent;
+    color:var(--gold);
+    border:1px solid var(--gold-deep);
+  }
+  button:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+  }
+
+  .form-msg{
+    font-size:14px;
+    color:var(--cream-dim);
+    font-style:italic;
+    min-height:18px;
+    margin-bottom:10px;
+  }
+
+  .toolbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .toolbar h2{
+    font-family:'Cinzel', serif;
+    font-size:16px;
+    letter-spacing:.06em;
+    color:var(--gold);
+    margin:0;
+  }
+  .count-badge{
+    font-family:'Cinzel', serif;
+    font-size:13px;
+    color:var(--gold-deep);
+  }
+  .count-badge strong{ color:var(--gold); }
+
+  #playerList{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    max-height:340px;
+    overflow-y:auto;
+  }
+  #playerList li{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(0,0,0,.18);
+    border-left:2px solid var(--gold-deep);
+    padding:9px 10px 9px 14px;
+    border-radius:3px;
+    font-size:16px;
+  }
+  .del-btn{
+    background:transparent;
+    border:1px solid var(--gold-deep);
+    color:var(--cream-dim);
+    width:26px; height:26px;
+    border-radius:50%;
+    font-size:14px;
+    line-height:1;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .del-btn:hover{
+    background:var(--burgundy-light, #7a2c42);
+    color:var(--cream);
+  }
+  .empty-hint{
+    color:var(--cream-dim);
+    font-style:italic;
+    font-size:15px;
+    opacity:.7;
+    text-align:center;
+    padding:10px 0;
+  }
+
+  footer{
+    text-align:center;
+    padding:26px 10px 4px;
+  }
+
+  @media (max-width:420px){
+    .corner{ width:38px; height:38px; }
+    header{ padding-top:26px; }
+    .card{ padding:18px 14px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="frame">
+  <div class="corner corner-tl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-tr"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-bl"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+  <div class="corner corner-br"><svg viewBox="0 0 100 100"><path d="M4 4 C4 40, 40 4, 60 4 M4 4 C40 4, 4 40, 4 60" fill="none" stroke="#d4b96a" stroke-width="2"/><circle cx="4" cy="4" r="3" fill="#d4b96a"/><path d="M18 4 C18 14, 8 14, 8 24" fill="none" stroke="#d4b96a" stroke-width="1.3"/></svg></div>
+
+  <header>
+    <div class="eyebrow">Gerade am Spielen</div>
+    <h1>Mitspielen?</h1>
+    <p class="intro">Trag dich hier ein, wenn du bei den Spielen mitmachst. Willst du später kurz pausieren, trag dich einfach aus – und wenn du zurück bist, wieder ein.</p>
+    <div class="divider"><span class="diamond"></span></div>
+  </header>
+
+  <main>
+    <section class="card">
+      <form id="joinForm">
+        <input type="text" id="nameInput" placeholder="Wie heißt du?" autocomplete="name" maxlength="30">
+        <button type="submit">Eintragen</button>
+      </form>
+      <div class="form-msg" id="formMsg"></div>
+
+      <div class="toolbar">
+        <h2>Wer spielt gerade mit</h2>
+        <button type="button" class="secondary" id="refreshBtn">Aktualisieren</button>
+      </div>
+      <div class="count-badge" id="countBadge" style="margin-bottom:10px;"></div>
+      <ul id="playerList"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <div class="divider"><span class="diamond"></span></div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Konfiguration: gleiche Datenbank-URL wie in rsvp.html ----
+  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app/"; // OHNE Slash am Ende
+  var AUTO_REFRESH_MS = 6000; // wie oft automatisch neu geladen wird
+  // -----------------------------------------------------------------
+
+  var joinForm = document.getElementById('joinForm');
+  var nameInput = document.getElementById('nameInput');
+  var formMsg = document.getElementById('formMsg');
+  var refreshBtn = document.getElementById('refreshBtn');
+  var playerList = document.getElementById('playerList');
+  var countBadge = document.getElementById('countBadge');
+
+  function firebaseConfigured(){
+    return FIREBASE_URL.indexOf('DEIN_PROJEKT') === -1;
+  }
+
+  function renderPlayers(players){
+    playerList.innerHTML = '';
+    var keys = Object.keys(players);
+    countBadge.innerHTML = 'Aktuell <strong>' + keys.length + '</strong> ' + (keys.length === 1 ? 'Spieler' : 'Spieler') + ' angemeldet';
+
+    if(keys.length === 0){
+      var hint = document.createElement('li');
+      hint.className = 'empty-hint';
+      hint.style.border = 'none';
+      hint.style.background = 'transparent';
+      hint.textContent = 'Noch niemand eingetragen.';
+      playerList.appendChild(hint);
+      return;
+    }
+
+    keys
+      .map(function(key){ return { key: key, name: players[key].name || '' }; })
+      .sort(function(a, b){ return a.name.localeCompare(b.name, 'de'); })
+      .forEach(function(p){
+        var li = document.createElement('li');
+        var span = document.createElement('span');
+        span.textContent = p.name;
+        var btn = document.createElement('button');
+        btn.className = 'del-btn';
+        btn.setAttribute('aria-label', p.name + ' austragen');
+        btn.textContent = '×';
+        btn.addEventListener('click', function(){ removePlayer(p.key); });
+        li.appendChild(span);
+        li.appendChild(btn);
+        playerList.appendChild(li);
+      });
+  }
+
+  function loadPlayers(){
+    if(!firebaseConfigured()){
+      formMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+      return;
+    }
+    fetch(FIREBASE_URL + '/spieler.json')
+      .then(function(res){
+        if(!res.ok){ throw new Error('Ladefehler'); }
+        return res.json();
+      })
+      .then(function(data){
+        renderPlayers(data || {});
+      })
+      .catch(function(){
+        countBadge.textContent = 'Liste konnte gerade nicht geladen werden.';
+      });
+  }
+
+  function addPlayer(name){
+    fetch(FIREBASE_URL + '/spieler.json')
+      .then(function(res){ return res.json(); })
+      .then(function(data){
+        var players = data || {};
+        var exists = Object.keys(players).some(function(key){
+          return (players[key].name || '').toLowerCase() === name.toLowerCase();
+        });
+        if(exists){
+          formMsg.textContent = '„' + name + '" ist schon in der Liste.';
+          return;
+        }
+        return fetch(FIREBASE_URL + '/spieler.json', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: name })
+        }).then(function(res){
+          if(!res.ok){ throw new Error('Schreibfehler'); }
+          formMsg.textContent = '';
+          nameInput.value = '';
+          loadPlayers();
+        });
+      })
+      .catch(function(){
+        formMsg.textContent = 'Eintragen hat gerade nicht geklappt, versuch es noch einmal.';
+      });
+  }
+
+  function removePlayer(key){
+    fetch(FIREBASE_URL + '/spieler/' + key + '.json', { method: 'DELETE' })
+      .then(function(){ loadPlayers(); })
+      .catch(function(){
+        formMsg.textContent = 'Austragen hat gerade nicht geklappt, versuch es noch einmal.';
+      });
+  }
+
+  joinForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = nameInput.value.trim();
+    if(!name){ return; }
+    if(!firebaseConfigured()){
+      formMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+      return;
+    }
+    formMsg.textContent = '';
+    addPlayer(name);
+  });
+
+  refreshBtn.addEventListener('click', loadPlayers);
+
+  loadPlayers();
+  setInterval(loadPlayers, AUTO_REFRESH_MS);
+})();
+</script>
+</body>
+</html>
