@@ -12,6 +12,7 @@
     --burgundy-deepest:#2c0e18;
     --burgundy-deep:#3d1220;
     --burgundy:#5c1a2e;
+    --burgundy-light:#7a2c42;
     --gold:#d4b96a;
     --gold-deep:#a9822f;
     --cream:#ecdfc0;
@@ -35,7 +36,7 @@
   .frame{
     position:relative;
     width:100%;
-    max-width:520px;
+    max-width:640px;
   }
 
   .corner{
@@ -81,7 +82,7 @@
     color:var(--cream-dim);
     font-size:17px;
     line-height:1.5;
-    max-width:400px;
+    max-width:420px;
     margin:14px auto 0;
   }
 
@@ -181,7 +182,15 @@
     color:var(--cream-dim);
     font-style:italic;
     min-height:18px;
-    margin-bottom:10px;
+    margin-bottom:6px;
+  }
+  .form-msg.success{
+    color:var(--gold);
+    font-style:normal;
+    font-weight:600;
+  }
+  .form-msg.error{
+    color:#e0a3a3;
   }
 
   .toolbar{
@@ -189,7 +198,7 @@
     align-items:center;
     justify-content:space-between;
     gap:10px;
-    margin-bottom:14px;
+    margin:14px 0;
   }
   .toolbar h2{
     font-family:'Cinzel', serif;
@@ -198,49 +207,93 @@
     color:var(--gold);
     margin:0;
   }
-  .count-badge{
-    font-family:'Cinzel', serif;
-    font-size:13px;
-    color:var(--gold-deep);
+  .summary-line{
+    font-size:14px;
+    color:var(--cream-dim);
+    margin-bottom:14px;
   }
-  .count-badge strong{ color:var(--gold); }
+  .summary-line strong{ color:var(--gold); }
 
-  #playerList{
-    list-style:none;
-    margin:0; padding:0;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    max-height:340px;
-    overflow-y:auto;
+  #teamsContainer{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:12px;
   }
-  #playerList li{
+  .team-box{
+    background:rgba(0,0,0,.16);
+    border:1px solid rgba(212,185,106,.25);
+    border-radius:5px;
+    padding:14px 14px 12px;
+  }
+  .team-box h3{
+    font-family:'Cinzel', serif;
+    font-size:14px;
+    letter-spacing:.05em;
+    color:var(--gold);
+    margin:0 0 10px;
+  }
+  .team-box h3 .team-sub{
+    font-size:11px;
+    color:var(--cream-dim);
+    font-weight:normal;
+    letter-spacing:0;
+    opacity:.75;
+  }
+
+  .member-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    background:rgba(0,0,0,.18);
-    border-left:2px solid var(--gold-deep);
-    padding:9px 10px 9px 14px;
-    border-radius:3px;
-    font-size:16px;
+    gap:8px;
+    padding:7px 0;
+    border-bottom:1px solid rgba(212,185,106,.1);
+    font-size:15px;
   }
-  .del-btn{
+  .member-row:last-child{ border-bottom:none; }
+  .member-name{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .member-row.paused .member-name{
+    text-decoration:line-through;
+    color:var(--cream-dim);
+    opacity:.7;
+  }
+  .pause-pill{
+    font-size:10px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#e0a3a3;
+    border:1px solid #e0a3a3;
+    border-radius:10px;
+    padding:2px 7px;
+    margin-left:6px;
+    flex-shrink:0;
+  }
+  .toggle-btn{
+    font-family:'Cinzel', serif;
+    font-size:11px;
+    letter-spacing:.03em;
     background:transparent;
     border:1px solid var(--gold-deep);
     color:var(--cream-dim);
-    width:26px; height:26px;
-    border-radius:50%;
-    font-size:14px;
-    line-height:1;
-    padding:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    padding:4px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    flex-shrink:0;
   }
-  .del-btn:hover{
-    background:var(--burgundy-light, #7a2c42);
+  .toggle-btn:hover{
+    background:var(--burgundy-light);
     color:var(--cream);
   }
+  .toggle-btn.is-paused{
+    border-color:var(--gold);
+    color:var(--gold);
+  }
+
   .empty-hint{
     color:var(--cream-dim);
     font-style:italic;
@@ -273,7 +326,7 @@
   <header>
     <div class="eyebrow">Gerade am Spielen</div>
     <h1>Mitspielen?</h1>
-    <p class="intro">Trag dich hier ein, wenn du bei den Spielen mitmachst. Willst du später kurz pausieren, trag dich einfach aus – und wenn du zurück bist, wieder ein.</p>
+    <p class="intro">Trag dich hier ein — du wirst automatisch dem Team zugeteilt, das gerade am wenigsten aktive Leute hat. Willst du kurz eine Pause, pausierst du dich einfach, dein Team bleibt dir erhalten.</p>
     <div class="divider"><span class="diamond"></span></div>
   </header>
 
@@ -286,11 +339,11 @@
       <div class="form-msg" id="formMsg"></div>
 
       <div class="toolbar">
-        <h2>Wer spielt gerade mit</h2>
+        <h2>Teams</h2>
         <button type="button" class="secondary" id="refreshBtn">Aktualisieren</button>
       </div>
-      <div class="count-badge" id="countBadge" style="margin-bottom:10px;"></div>
-      <ul id="playerList"></ul>
+      <div class="summary-line" id="summaryLine"></div>
+      <div id="teamsContainer"></div>
     </section>
   </main>
 
@@ -303,58 +356,104 @@
 (function(){
   "use strict";
 
-  // ---- Konfiguration: gleiche Datenbank-URL wie in rsvp.html ----
-  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app/"; // OHNE Slash am Ende
-  var AUTO_REFRESH_MS = 6000; // wie oft automatisch neu geladen wird
-  // -----------------------------------------------------------------
+  // ---- Konfiguration ----
+  var FIREBASE_URL = "https://maskenball-28994-default-rtdb.europe-west1.firebasedatabase.app"; // OHNE Slash am Ende
+  var TEAM_COUNT = 2; // Anzahl Teams, vor dem Fest final einstellen
+  var AUTO_REFRESH_MS = 6000;
+  // ------------------------
 
   var joinForm = document.getElementById('joinForm');
   var nameInput = document.getElementById('nameInput');
   var formMsg = document.getElementById('formMsg');
   var refreshBtn = document.getElementById('refreshBtn');
-  var playerList = document.getElementById('playerList');
-  var countBadge = document.getElementById('countBadge');
+  var teamsContainer = document.getElementById('teamsContainer');
+  var summaryLine = document.getElementById('summaryLine');
 
   function firebaseConfigured(){
     return FIREBASE_URL.indexOf('DEIN_PROJEKT') === -1;
   }
 
-  function renderPlayers(players){
-    playerList.innerHTML = '';
+  function setMsg(text, kind){
+    formMsg.textContent = text;
+    formMsg.className = 'form-msg' + (kind ? ' ' + kind : '');
+  }
+
+  function renderTeams(players){
     var keys = Object.keys(players);
-    countBadge.innerHTML = 'Aktuell <strong>' + keys.length + '</strong> ' + (keys.length === 1 ? 'Spieler' : 'Spieler') + ' angemeldet';
+    var maxTeam = TEAM_COUNT;
+    keys.forEach(function(k){
+      var t = players[k].team;
+      if(typeof t === 'number' && t > maxTeam){ maxTeam = t; }
+    });
 
-    if(keys.length === 0){
-      var hint = document.createElement('li');
-      hint.className = 'empty-hint';
-      hint.style.border = 'none';
-      hint.style.background = 'transparent';
-      hint.textContent = 'Noch niemand eingetragen.';
-      playerList.appendChild(hint);
-      return;
+    var activeTotal = 0, pausedTotal = 0;
+    keys.forEach(function(k){ players[k].paused ? pausedTotal++ : activeTotal++; });
+    summaryLine.innerHTML = '<strong>' + activeTotal + '</strong> aktiv, <strong>' + pausedTotal + '</strong> pausiert, <strong>' + keys.length + '</strong> insgesamt';
+
+    teamsContainer.innerHTML = '';
+    for(var teamNum = 1; teamNum <= maxTeam; teamNum++){
+      var members = keys
+        .filter(function(k){ return players[k].team === teamNum; })
+        .map(function(k){ return { key: k, name: players[k].name || '', paused: !!players[k].paused }; })
+        .sort(function(a, b){
+          if(a.paused !== b.paused){ return a.paused ? 1 : -1; }
+          return a.name.localeCompare(b.name, 'de');
+        });
+
+      var activeCount = members.filter(function(m){ return !m.paused; }).length;
+
+      var box = document.createElement('div');
+      box.className = 'team-box';
+      var h3 = document.createElement('h3');
+      h3.textContent = 'Team ' + teamNum + ' ';
+      var sub = document.createElement('span');
+      sub.className = 'team-sub';
+      sub.textContent = activeCount < members.length
+        ? '(' + activeCount + ' aktiv / ' + members.length + ')'
+        : '(' + members.length + ')';
+      h3.appendChild(sub);
+      box.appendChild(h3);
+
+      if(members.length === 0){
+        var hint = document.createElement('div');
+        hint.className = 'empty-hint';
+        hint.textContent = 'Noch niemand hier.';
+        box.appendChild(hint);
+      } else {
+        members.forEach(function(m){
+          var row = document.createElement('div');
+          row.className = 'member-row' + (m.paused ? ' paused' : '');
+
+          var nameSpan = document.createElement('span');
+          nameSpan.className = 'member-name';
+          nameSpan.textContent = m.name;
+          if(m.paused){
+            var pill = document.createElement('span');
+            pill.className = 'pause-pill';
+            pill.textContent = 'Pausiert';
+            nameSpan.appendChild(pill);
+          }
+
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'toggle-btn' + (m.paused ? ' is-paused' : '');
+          toggleBtn.textContent = m.paused ? 'Zurück' : 'Pausieren';
+          toggleBtn.addEventListener('click', function(key, paused){
+            return function(){ togglePause(key, paused); };
+          }(m.key, m.paused));
+
+          row.appendChild(nameSpan);
+          row.appendChild(toggleBtn);
+          box.appendChild(row);
+        });
+      }
+
+      teamsContainer.appendChild(box);
     }
-
-    keys
-      .map(function(key){ return { key: key, name: players[key].name || '' }; })
-      .sort(function(a, b){ return a.name.localeCompare(b.name, 'de'); })
-      .forEach(function(p){
-        var li = document.createElement('li');
-        var span = document.createElement('span');
-        span.textContent = p.name;
-        var btn = document.createElement('button');
-        btn.className = 'del-btn';
-        btn.setAttribute('aria-label', p.name + ' austragen');
-        btn.textContent = '×';
-        btn.addEventListener('click', function(){ removePlayer(p.key); });
-        li.appendChild(span);
-        li.appendChild(btn);
-        playerList.appendChild(li);
-      });
   }
 
   function loadPlayers(){
     if(!firebaseConfigured()){
-      formMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+      setMsg('Datenbank noch nicht eingerichtet.', 'error');
       return;
     }
     fetch(FIREBASE_URL + '/spieler.json')
@@ -363,11 +462,26 @@
         return res.json();
       })
       .then(function(data){
-        renderPlayers(data || {});
+        renderTeams(data || {});
       })
       .catch(function(){
-        countBadge.textContent = 'Liste konnte gerade nicht geladen werden.';
+        summaryLine.textContent = 'Liste konnte gerade nicht geladen werden.';
       });
+  }
+
+  function pickTeamForNewPlayer(players){
+    var counts = {};
+    for(var i = 1; i <= TEAM_COUNT; i++){ counts[i] = 0; }
+    Object.keys(players).forEach(function(k){
+      var p = players[k];
+      if(!p.paused && p.team >= 1 && p.team <= TEAM_COUNT){
+        counts[p.team]++;
+      }
+    });
+    var minCount = Math.min.apply(null, Object.keys(counts).map(function(t){ return counts[t]; }));
+    var candidates = Object.keys(counts).filter(function(t){ return counts[t] === minCount; });
+    var chosen = candidates[Math.floor(Math.random() * candidates.length)];
+    return parseInt(chosen, 10);
   }
 
   function addPlayer(name){
@@ -379,30 +493,35 @@
           return (players[key].name || '').toLowerCase() === name.toLowerCase();
         });
         if(exists){
-          formMsg.textContent = '„' + name + '" ist schon in der Liste.';
+          setMsg('„' + name + '" ist schon in der Liste.', 'error');
           return;
         }
+        var team = pickTeamForNewPlayer(players);
         return fetch(FIREBASE_URL + '/spieler.json', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: name })
+          body: JSON.stringify({ name: name, team: team, paused: false })
         }).then(function(res){
           if(!res.ok){ throw new Error('Schreibfehler'); }
-          formMsg.textContent = '';
+          setMsg('Du bist jetzt in Team ' + team + '!', 'success');
           nameInput.value = '';
           loadPlayers();
         });
       })
       .catch(function(){
-        formMsg.textContent = 'Eintragen hat gerade nicht geklappt, versuch es noch einmal.';
+        setMsg('Eintragen hat gerade nicht geklappt, versuch es noch einmal.', 'error');
       });
   }
 
-  function removePlayer(key){
-    fetch(FIREBASE_URL + '/spieler/' + key + '.json', { method: 'DELETE' })
+  function togglePause(key, currentlyPaused){
+    fetch(FIREBASE_URL + '/spieler/' + key + '.json', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paused: !currentlyPaused })
+    })
       .then(function(){ loadPlayers(); })
       .catch(function(){
-        formMsg.textContent = 'Austragen hat gerade nicht geklappt, versuch es noch einmal.';
+        setMsg('Das hat gerade nicht geklappt, versuch es noch einmal.', 'error');
       });
   }
 
@@ -411,10 +530,10 @@
     var name = nameInput.value.trim();
     if(!name){ return; }
     if(!firebaseConfigured()){
-      formMsg.textContent = 'Datenbank noch nicht eingerichtet.';
+      setMsg('Datenbank noch nicht eingerichtet.', 'error');
       return;
     }
-    formMsg.textContent = '';
+    setMsg('', '');
     addPlayer(name);
   });
 
