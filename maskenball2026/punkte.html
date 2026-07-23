@@ -463,11 +463,6 @@
     teamScores = new Array(TEAM_COUNT).fill(0);
   }
 
-  var orderDisplay = document.getElementById('orderDisplay');
-  var shuffleOrderBtn = document.getElementById('shuffleOrder');
-  var clearOrderBtn = document.getElementById('clearOrder');
-  var orderMsg = document.getElementById('orderMsg');
-
   var scoreDisplay = document.getElementById('scoreDisplay');
   var resetScoresBtn = document.getElementById('resetScores');
 
@@ -515,84 +510,6 @@
       });
   }
 
-  function shuffleArray(arr){
-    var a = arr.slice();
-    for(var i = a.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
-    }
-    return a;
-  }
-
-  // --- Reihenfolge pro Team ---
-  function renderOrder(){
-    orderDisplay.innerHTML = '';
-    if(orderByTeam.length !== TEAM_COUNT){
-      var hint = document.createElement('div');
-      hint.className = 'empty-hint';
-      hint.textContent = 'Noch keine Reihenfolge ausgelost.';
-      orderDisplay.appendChild(hint);
-      return;
-    }
-    for(var teamNum = 1; teamNum <= TEAM_COUNT; teamNum++){
-      var box = document.createElement('div');
-      box.className = 'order-box';
-      var h3 = document.createElement('h3');
-      h3.textContent = 'Team ' + teamNum;
-      box.appendChild(h3);
-      var ol = document.createElement('ol');
-      var members = orderByTeam[teamNum - 1] || [];
-      if(members.length === 0){
-        var empty = document.createElement('div');
-        empty.className = 'empty-hint';
-        empty.style.fontSize = '13px';
-        empty.textContent = 'Niemand aktiv.';
-        box.appendChild(empty);
-      } else {
-        members.forEach(function(name, idx){
-          var li = document.createElement('li');
-          var num = document.createElement('span');
-          num.className = 'order-num';
-          num.textContent = (idx + 1) + '.';
-          var nameSpan = document.createElement('span');
-          nameSpan.textContent = name;
-          li.appendChild(num);
-          li.appendChild(nameSpan);
-          ol.appendChild(li);
-        });
-        box.appendChild(ol);
-      }
-      orderDisplay.appendChild(box);
-    }
-  }
-
-  function doShuffleOrder(){
-    orderMsg.textContent = 'Lädt aktive Spieler …';
-    fetchActiveGroupedPlayers().then(function(grouped){
-      if(!grouped){
-        orderMsg.textContent = 'Datenbank noch nicht eingerichtet.';
-        return;
-      }
-      orderByTeam = [];
-      for(var i = 1; i <= TEAM_COUNT; i++){
-        orderByTeam.push(shuffleArray(grouped[i] || []));
-      }
-      saveOrder();
-      orderMsg.textContent = '';
-      renderOrder();
-    }).catch(function(){
-      orderMsg.textContent = 'Spielerliste konnte nicht geladen werden.';
-    });
-  }
-
-  function doClearOrder(){
-    orderByTeam = [];
-    saveOrder();
-    renderOrder();
-  }
-
-  shuffleOrderBtn.addEventListener('click', doShuffleOrder);
-  clearOrderBtn.addEventListener('click', doClearOrder);
 
   // --- Punktestand pro Team ---
   function renderScores(){
@@ -812,7 +729,6 @@
   });
 
   // --- Init ---
-  renderOrder();
   renderScores();
   wheelCanvas.style.transition = 'transform 3.2s cubic-bezier(.17,.67,.16,1.01)';
   refreshPlayers();
